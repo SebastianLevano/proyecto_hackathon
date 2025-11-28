@@ -219,54 +219,17 @@ if (process.env.OPENAI_API_KEY) {
 // FORMATEAR RECOMENDACIONES (NO JSON)
 // ----------------------------------------------------
 function formatRecommendations(recs) {
-    return recs.map(r => {
-        const title = r.title || "Recomendación";
-
-        let blocks = [];
-
-        // RESUMEN
-        if (r.summary && r.summary.trim().length > 0) {
-    blocks.push(`📘 *Resumen pedagógico:*\n${r.summary.trim()}`);
-} else if (r.text && r.text.trim().length > 0) {
-    blocks.push(`📘 *Resumen pedagógico:*\n${r.text.trim()}`);
-} else {
-    blocks.push(`📘 *Resumen pedagógico:*\nNo se proporcionó resumen.`);
+    return recs.map(r => ({
+        title: r.title || "Recomendación",
+        areas_minedu: Array.isArray(r.areas_minedu) ? r.areas_minedu : [],
+        summary: r.summary || "",
+        duration_min: r.duration_min || 20,
+        steps: Array.isArray(r.steps) ? r.steps : [],
+        materials: Array.isArray(r.materials) ? r.materials : [],
+        ref_unit: r.ref_unit || "Unidad X"
+    }));
 }
 
-
-        // PASOS
-        if (Array.isArray(r.steps) && r.steps.length > 0) {
-            const steps = r.steps.map((s, i) => `${i + 1}. ${s}`).join("\n");
-            blocks.push(`📝 *Pasos sugeridos:*\n${steps}`);
-        }
-
-        // MATERIALES
-        if (Array.isArray(r.materials) && r.materials.length > 0) {
-            const mats = r.materials.map(m => `• ${m}`).join("\n");
-            blocks.push(`📎 *Materiales:*\n${mats}`);
-        }
-
-        // ÁREA MINEDU
-        if (Array.isArray(r.areas_minedu) && r.areas_minedu.length > 0) {
-            blocks.push(`🏷️ *Área(s) MINEDU:* ${r.areas_minedu.join(", ")}`);
-        }
-
-        // UNIDAD DEL MANUAL
-        if (r.ref_unit) {
-            blocks.push(`📚 *Referencia al manual:* ${r.ref_unit}`);
-        }
-
-        // UNIR TODO CON SALTOS DE LÍNEA
-        const text = blocks.join("\n\n");
-
-        return {
-            title,
-            text,
-            duration_min: r.duration_min || 15,
-            ref_unit: r.ref_unit || "MINEDU"
-        };
-    });
-}
 
 // ----------------------------------------------------
 // IA — RECOMENDACIONES (MODIFICADO SEGÚN MANUAL MINEDU)
