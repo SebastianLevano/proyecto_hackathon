@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AulaSense – Inicio</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(180deg, #4a6cf7, #6ea8ff);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+    }
+
+    .card {
+      background: white;
+      color: #1e293b;
+      padding: 30px;
+      width: 90%;
+      max-width: 420px;
+      border-radius: 18px;
+      text-align: center;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      animation: fadeIn 0.5s ease;
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: 26px;
+      font-weight: 700;
+      color: #334155;
+    }
+
+    p {
+      font-size: 15px;
+      color: #64748b;
+      margin-top: 5px;
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      margin-top: 15px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-size: 17px;
+      font-weight: 600;
+      transition: 0.25s;
+    }
+
+    .btn-docente {
+      background: #4a6cf7;
+      color: white;
+    }
+
+    .btn-docente:hover {
+      background: #3c57cc;
+    }
+
+    .btn-estudiante {
+      background: #e2e8f0;
+      color: #1e293b;
+    }
+
+    .btn-estudiante:hover {
+      background: #cfd8e3;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+
+</head>
+<body>
+
+  <div class="card">
+    <h1>AulaSense</h1>
+    <p>Selecciona tu tipo de acceso</p>
+
+    <a class="btn btn-docente" href="docente.html">Ingresar como Docente</a>
+    <a class="btn btn-estudiante" href="estudiante.html">Ingresar como Estudiante</a>
+  </div>
+
+</body>
+</html>
