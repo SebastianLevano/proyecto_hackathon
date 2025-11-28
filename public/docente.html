@@ -915,31 +915,56 @@ function renderAdvancedPanel(payload){
   iaNarrative.style.display = 'block';
   iaNarrative.innerHTML = `<strong>Análisis sintético:</strong><div style="margin-top:8px" class="small">${narrative}</div>`;
 
-  iaRecsList.innerHTML = '';
-  if(!recs || recs.length === 0){
-    iaRecsList.innerHTML = `<div class="small">No se encontraron recomendaciones automáticas por IA.</div>`;
-  } else {
-    recs.forEach(r => {
-      const recDiv = document.createElement('div');
-      recDiv.className = 'ia-rec card';
-      recDiv.innerHTML = `
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
-          <div style="flex:1">
-            <strong style="font-size:15px">${r.title || 'Recomendación'}</strong>
-                <div class="small" style="margin-top:6px">${cleanJsonLikeText(r.text || r.summary || r.desc || '')}</div>
-                ${r.steps && r.steps.length ? `<div style="margin-top:8px"><strong>Pasos:</strong><ol class="small">${r.steps.map(s=>`<li>${s}</li>`).join('')}</ol></div>` : ''}
-            ${r.materials && r.materials.length ? `<div class="small" style="margin-top:8px"><strong>Materiales:</strong> ${r.materials.join(', ')}</div>` : ''}
-            <div class="meta" style="margin-top:8px">Unidad: ${r.ref_unit || r.source || 'Manual'}</div>
-          </div>
-          <div style="min-width:110px;text-align:right">
-            <div class="small">Duración aprox.</div>
-            <div style="font-weight:700;font-size:18px">${r.duration_min || 15} min</div>
-          </div>
-        </div>
-      `;
-      iaRecsList.appendChild(recDiv);
-    });
-  }
+ iaRecsList.innerHTML = '';
+
+if (!recs || recs.length === 0) {
+  iaRecsList.innerHTML = `<div class="small">No se encontraron recomendaciones automáticas por IA.</div>`;
+} else {
+  recs.forEach(r => {
+
+    const recDiv = document.createElement("div");
+    recDiv.className = "ia-rec";
+    recDiv.style.padding = "15px";
+    recDiv.style.borderRadius = "10px";
+    recDiv.style.background = "#fff";
+    recDiv.style.boxShadow = "0 2px 8px rgba(0,0,0,0.08)";
+    recDiv.style.marginBottom = "20px";
+
+    recDiv.innerHTML = `
+      <h3 style="margin-top:0;font-size:17px">${r.title || "Recomendación"}</h3>
+
+      ${r.areas_minedu ? `
+        <p class="small"><strong>Áreas MINEDU:</strong> 
+        ${r.areas_minedu.join(", ")}</p>
+      ` : ""}
+
+      ${r.summary ? `
+        <p class="small" style="white-space:pre-line">
+        <strong>Resumen pedagógico:</strong><br>${r.summary}
+        </p>
+      ` : ""}
+
+      ${r.steps && r.steps.length ? `
+        <p class="small"><strong>Pasos sugeridos:</strong></p>
+        <ol class="small" style="margin-top:-8px">
+          ${r.steps.map(s => `<li>${s}</li>`).join("")}
+        </ol>
+      ` : ""}
+
+      ${r.materials && r.materials.length ? `
+        <p class="small"><strong>Materiales:</strong><br>
+        ${r.materials.map(m => "• " + m).join("<br>")}
+        </p>
+      ` : ""}
+
+      <p class="small"><strong>Duración:</strong> ${r.duration_min || 20} min</p>
+      <p class="meta">Referencia: ${r.manual_ref || r.source || "Unidad MINEDU"}</p>
+    `;
+
+    iaRecsList.appendChild(recDiv);
+  });
+}
+
 }
 
 /* renderAnalyzeFromPayload -> actualiza KPIs si la IA devuelve stats */
