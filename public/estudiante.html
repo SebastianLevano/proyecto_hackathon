@@ -280,6 +280,14 @@ function enviar() {
   });
 }
 </script>
+<script>
+fetch("/api/aulas")
+  .then(r => r.json())
+  .then(arr => {
+    console.log("Aulas desde estudiante:", arr);
+  });
+</script>
 
 </body>
+
 </html>
