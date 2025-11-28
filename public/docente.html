@@ -160,6 +160,8 @@ header .small {
             <button id="btnRefresh" class="btn">Actualizar</button>
             <button id="btnExport" class="btn secondary">Exportar respuestas</button>
             <button id="btnAnalyze" class="btn">Ejecutar análisis IA</button>
+              <button id="btnLogout" class="btn secondary" style="background:#e5e7eb;color:#333;">Salir</button>
+
           </div>
         </div>
       </div>
@@ -371,6 +373,33 @@ btnDemo.addEventListener('click', async ()=>{
 });
 
 btnRefresh.addEventListener('click', ()=> loadRaw(currentAulaId));
+const btnLogout = document.getElementById('btnLogout');
+btnLogout.addEventListener('click', () => {
+  // limpiar variables de sesión en el frontend
+  currentAulaId = null;
+  teacherName = null;
+
+  // ocultar dashboard y mostrar login
+  document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('loginWrap').style.display = 'block';
+
+  // limpiar campos
+  document.getElementById('inpUser').value = '';
+  document.getElementById('inpPass').value = '';
+
+  // eliminar IA y gráficos si estaban mostrando datos previos
+  iaTopBand.innerHTML = '';
+  iaTopCards.innerHTML = '';
+  iaNarrative.innerHTML = '';
+  iaRecsList.innerHTML = '';
+  iaNarrative.style.display = 'none';
+  
+  // detener auto-refresh
+  if (autoRefresh) clearInterval(autoRefresh);
+
+  alert("Sesión cerrada.");
+});
+
 btnExport.addEventListener('click', exportResponses);
 btnAnalyze.addEventListener('click', async ()=> {
    const payload = await loadAnalyze(currentAulaId);
