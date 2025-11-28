@@ -280,6 +280,16 @@ fetch("/api/respuestas", {
     window.scrollTo(0, 0);
   });
 }
+
+
+console.log("🔵 estudiante.html cargó en Render");
+
+fetch("/api/aulas")
+  .then(r => r.json())
+  .then(aulas => {
+    console.log("🟢 Aulas recibidas desde backend:", aulas);
+  })
+  .catch(err => console.error("🔴 Error fetch aulas:", err));
 </script>
 
 
