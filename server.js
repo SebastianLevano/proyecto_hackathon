@@ -225,11 +225,14 @@ function formatRecommendations(recs) {
         let blocks = [];
 
         // RESUMEN
-        if (r.summary) {
-            blocks.push(`📘 *Resumen pedagógico:*\n${r.summary.trim()}`);
-        } else if (r.text) {
-            blocks.push(`📘 *Resumen pedagógico:*\n${r.text.trim()}`);
-        }
+        if (r.summary && r.summary.trim().length > 0) {
+    blocks.push(`📘 *Resumen pedagógico:*\n${r.summary.trim()}`);
+} else if (r.text && r.text.trim().length > 0) {
+    blocks.push(`📘 *Resumen pedagógico:*\n${r.text.trim()}`);
+} else {
+    blocks.push(`📘 *Resumen pedagógico:*\nNo se proporcionó resumen.`);
+}
+
 
         // PASOS
         if (Array.isArray(r.steps) && r.steps.length > 0) {
@@ -323,7 +326,7 @@ Las 7 áreas oficiales (obligatorias) son:
 7. Convivencia y Disciplina Escolar
 
 ### FORMATO DE CADA RECOMENDACIÓN (SECCIONES SEPARADAS)
-Debe incluir los siguientes campos:
+Debe incluir los siguientes campos obligatoriamente:
 
 - "title": título breve.
 - "areas_minedu": lista con 1 o 2 áreas oficiales.
@@ -351,6 +354,8 @@ ${JSON.stringify(stats, null, 2)}
    }
  ]
 }
+ Si falta algún campo, no generes la respuesta.
+Asegúrate de que todas las recomendaciones tengan summary, steps y materials.
 NO añadas nada fuera del JSON. 
 NO escribas explicaciones.
 NO uses comillas triples ni bloques de código.
