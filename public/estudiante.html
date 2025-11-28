@@ -208,7 +208,7 @@
 
 <script>
 // Render aulas
-fetch("http://localhost:3000/api/aulas")
+fetch("/api/aulas")
   .then(r => r.json())
   .then(aulas => {
     const select = document.getElementById("aulaSelect");
@@ -265,11 +265,12 @@ function enviar() {
     ]
   };
 
-  fetch("http://localhost:3000/api/respuestas", {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({ aulaId, data })
-  })
+fetch("/api/respuestas", {
+  method: "POST",
+  headers: {"Content-Type":"application/json"},
+  body: JSON.stringify({ aulaId, data })
+})
+
   .then(() => {
     alert("¡Gracias por responder! 😊");
 
@@ -280,13 +281,7 @@ function enviar() {
   });
 }
 </script>
-<script>
-fetch("/api/aulas")
-  .then(r => r.json())
-  .then(arr => {
-    console.log("Aulas desde estudiante:", arr);
-  });
-</script>
+
 
 </body>
 
