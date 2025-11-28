@@ -351,6 +351,11 @@ ${JSON.stringify(stats, null, 2)}
    }
  ]
 }
+NO añadas nada fuera del JSON. 
+NO escribas explicaciones.
+NO uses comillas triples ni bloques de código.
+Debes devolver SOLO el JSON puro, sin texto adicional.
+
 
 `;
 
