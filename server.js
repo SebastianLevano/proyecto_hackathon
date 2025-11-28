@@ -2,22 +2,24 @@
 // AULASENSE — BACKEND COMPLETO CON IA HÍBRIDA
 // -------------------------------------------------
 
-require("dotenv").config();
-console.log("API_KEY:", process.env.OPENAI_API_KEY ? "OK" : "NO");
-console.log("Valor leído:", process.env.OPENAI_API_KEY ? "[oculto]" : process.env.OPENAI_API_KEY);
+
 
 const express = require("express");
 const cors = require("cors");
 const sqlite = require("better-sqlite3");
 const path = require("path");
-
-app.use(express.static(path.join(__dirname, "public")));
 const OpenAI = require("openai");
+require("dotenv").config();
+console.log("API_KEY:", process.env.OPENAI_API_KEY ? "OK" : "NO");
+console.log("Valor leído:", process.env.OPENAI_API_KEY ? "[oculto]" : process.env.OPENAI_API_KEY);
 
+// Inicializar app ANTES de usarla
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, "../public")));
+
+// Carpeta pública correcta (solo esta)
+app.use(express.static(path.join(__dirname, "public")));
 
 // ----------------------------------------------------
 // DATABASE
