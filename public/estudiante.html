@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Prototipo Hackathon – Estudiante</title>
+
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #eef1f7;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background: #4a6cf7;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+      border-bottom-left-radius: 20px;
+      border-bottom-right-radius: 20px;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 16px;
+      margin-bottom: 25px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+      animation: fadeIn 0.4s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .question {
+      font-weight: bold;
+      margin-bottom: 12px;
+      font-size: 17px;
+    }
+
+    .chip-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .chip {
+      padding: 10px 15px;
+      background: #f2f2f2;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: 0.2s;
+      border: 2px solid transparent;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 15px;
+    }
+
+    .chip:hover {
+      background: #e0e7ff;
+      border-color: #4a6cf7;
+    }
+
+    .chip.selected {
+      background: #4a6cf7;
+      border-color: #4a6cf7;
+      color: white;
+    }
+
+    #aulaSelect {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+
+    button {
+      width: 100%;
+      background: #4a6cf7;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 15px;
+      font-size: 17px;
+      cursor: pointer;
+      margin-top: 15px;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background: #3955d1;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>AulaSense – Encuesta del Día</header>
+
+<div class="container">
+
+  <!-- AULA -->
+  <div class="card">
+    <div class="question">Selecciona tu aula:</div>
+    <select id="aulaSelect">
+      <option value="">Seleccione</option>
+    </select>
+  </div>
+
+  <!-- P1 -->
+  <div class="card">
+    <div class="question">¿Qué emoción te acompañó más hoy?</div>
+    <div class="chip-group" id="emocion">
+      <div class="chip">😄 Alegría</div>
+      <div class="chip">🙂 Tranquilidad</div>
+      <div class="chip">😐 Neutral</div>
+      <div class="chip">😣 Estrés</div>
+      <div class="chip">😔 Tristeza</div>
+      <div class="chip">😕 Confusión</div>
+      <div class="chip">😡 Molestia</div>
+      <div class="chip">😴 Cansancio</div>
+      <div class="chip">😟 Ansiedad</div>
+    </div>
+  </div>
+
+  <!-- P2 -->
+  <div class="card">
+    <div class="question">¿Cómo estuvo tu motivación para estudiar hoy?</div>
+    <div class="chip-group" id="motivacion">
+      <div class="chip">Alta 🔥</div>
+      <div class="chip">Media 🙂</div>
+      <div class="chip">Baja 😴</div>
+    </div>
+  </div>
+
+  <!-- P3 -->
+  <div class="card">
+    <div class="question">Hoy en clase estuve…</div>
+    <div class="chip-group" id="atencion">
+      <div class="chip">Súper atento</div>
+      <div class="chip">Atento a medias</div>
+      <div class="chip">Perdido</div>
+      <div class="chip">Cansado</div>
+    </div>
+  </div>
+
+  <!-- P4 -->
+  <div class="card">
+    <div class="question">¿Tu energía hoy estuvo…?</div>
+    <div class="chip-group" id="energia">
+      <div class="chip">Alta 🔋</div>
+      <div class="chip">Media 🔋</div>
+      <div class="chip">Baja 🪫</div>
+    </div>
+  </div>
+
+  <!-- P5 -->
+  <div class="card">
+    <div class="question">¿Cómo estuvo el ambiente con tus compañeros hoy?</div>
+    <div class="chip-group" id="ambiente">
+      <div class="chip">Muy bueno</div>
+      <div class="chip">Bueno</div>
+      <div class="chip">Normal</div>
+      <div class="chip">Tenso</div>
+      <div class="chip">Difícil</div>
+    </div>
+  </div>
+
+  <!-- P6 -->
+  <div class="card">
+    <div class="question">¿Te sentiste acompañado por tus amig@s hoy?</div>
+    <div class="chip-group" id="acompanamiento">
+      <div class="chip">Sí</div>
+      <div class="chip">Más o menos</div>
+      <div class="chip">No</div>
+    </div>
+  </div>
+
+  <!-- P7 NUEVA PREGUNTA -->
+  <div class="card">
+    <div class="question">¿Qué tema te interesa que trabajemos?</div>
+    <div class="chip-group" id="tema">
+      <div class="chip">Convivencia familiar</div>
+      <div class="chip">Ansiedad</div>
+      <div class="chip">Proyecto de vida</div>
+      <div class="chip">Salud</div>
+      <div class="chip">Orientación vocacional</div>
+      <div class="chip">Otro</div>
+    </div>
+  </div>
+
+  <button onclick="enviar()">Enviar respuestas</button>
+
+</div>
+
+<script>
+// Render aulas
+fetch("http://localhost:3000/api/aulas")
+  .then(r => r.json())
+  .then(aulas => {
+    const select = document.getElementById("aulaSelect");
+    aulas.forEach(a => {
+      const op = document.createElement("option");
+      op.value = a.id;
+      op.textContent = a.nombre;
+      select.appendChild(op);
+    });
+  });
+
+// Chip selector
+document.querySelectorAll(".chip-group").forEach(group => {
+  group.addEventListener("click", e => {
+    if (e.target.classList.contains("chip")) {
+      [...group.children].forEach(c => c.classList.remove("selected"));
+      e.target.classList.add("selected");
+    }
+  });
+});
+
+// Enviar respuestas
+function enviar() {
+  const aulaId = document.getElementById("aulaSelect").value;
+  if (!aulaId) return alert("Por favor selecciona tu aula.");
+
+  function getSelected(id) {
+    const chip = document.querySelector(`#${id} .selected`);
+    return chip ? chip.textContent.trim() : "";
+  }
+
+  const emocion = getSelected("emocion");
+  const motivacion = getSelected("motivacion");
+  const atencion = getSelected("atencion");
+  const energia = getSelected("energia");
+  const ambiente = getSelected("ambiente");
+  const acompanamiento = getSelected("acompanamiento");
+  const tema = getSelected("tema"); // NUEVA RESPUESTA
+
+  if (!emocion || !motivacion || !atencion || !energia || !ambiente || !acompanamiento || !tema) {
+    return alert("Por favor responde todas las preguntas.");
+  }
+
+  // 🌟 Formato correcto
+  const data = {
+    answers: [
+      { qid: "emocion", value: emocion },
+      { qid: "motivacion", value: motivacion },
+      { qid: "atencion", value: atencion },
+      { qid: "energia", value: energia },
+      { qid: "ambiente", value: ambiente },
+      { qid: "acompanamiento", value: acompanamiento },
+      { qid: "tema", value: tema } // NUEVO
+    ]
+  };
+
+  fetch("http://localhost:3000/api/respuestas", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ aulaId, data })
+  })
+  .then(() => {
+    alert("¡Gracias por responder! 😊");
+
+    // limpiar formulario
+    document.getElementById("aulaSelect").value = "";
+    document.querySelectorAll(".chip").forEach(c => c.classList.remove("selected"));
+    window.scrollTo(0, 0);
+  });
+}
+</script>
+
+</body>
+</html>
