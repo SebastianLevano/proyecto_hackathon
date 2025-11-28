@@ -72,6 +72,32 @@
     .btn-estudiante:hover {
       background: #cfd8e3;
     }
+.btn-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;   /* centra vertical */
+  align-items: center;        /* centra horizontal */
+  gap: 20px;
+  width: 100%;
+}
+
+.main-btn {
+  background: #4a6cf7;
+  color: white;
+  text-decoration: none;
+  padding: 15px 25px;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: 600;
+  width: 250px;              /* tamaño uniforme */
+  text-align: center;        /* texto centrado */
+  box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+  transition: 0.25s;
+}
+
+.main-btn:hover {
+  background: #3955d1;
+}
 
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
@@ -86,8 +112,11 @@
     <h1>AulaSense</h1>
     <p>Selecciona tu tipo de acceso</p>
 
-    <a class="btn btn-docente" href="docente.html">Ingresar como Docente</a>
-    <a class="btn btn-estudiante" href="estudiante.html">Ingresar como Estudiante</a>
+<div class="btn-container">
+  <a href="docente.html" class="main-btn">Ingreso Docente</a>
+  <a href="estudiante.html" class="main-btn">Ingreso Estudiante</a>
+</div>
+
   </div>
 
 </body>
