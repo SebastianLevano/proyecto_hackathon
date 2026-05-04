@@ -1,0 +1,312 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root{
+  --bg:#f1f5f9;
+  --card:rgba(255,255,255,0.75);
+  --primary:#6366f1;
+  --primary-dark:#4f46e5;
+  --accent:#22c55e;
+  --text:#0f172a;
+  --muted:#64748b;
+  --border:#e2e8f0;
+}
+
+/* RESET */
+*{
+  box-sizing:border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: radial-gradient(circle at 20% 20%, #eef2ff, #f8fafc 60%);
+  margin: 0;
+  color: var(--text);
+}
+
+/* HEADER */
+header {
+    position: relative; /* 🔥 ESTO SOLUCIONA TODO */
+
+  background:
+    radial-gradient(circle at 20% 0%, rgba(74,108,247,0.35), transparent 45%),
+    radial-gradient(circle at 80% 10%, rgba(6,182,212,0.20), transparent 40%),
+linear-gradient(180deg, #1e293b 0%, #020617 100%);
+  color: white;
+  padding: 40px 20px 30px;
+  text-align: center;
+  border-bottom-left-radius: 40px;
+  border-bottom-right-radius: 40px;
+  box-shadow: 0 20px 40px rgba(79,70,229,0.25);
+}
+
+header h1 {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+header p {
+  margin-top: 10px;
+  font-size: 15px;
+  opacity: 0.9;
+}
+
+.back-btn{
+  position: absolute;
+  top: 20px;
+  left: 20px;
+      width: auto; /* 🔥 evita que herede width global */
+
+
+  background: rgba(255,255,255,0.1);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.2);
+
+  padding: 8px 14px;
+  border-radius: 10px;
+
+  font-size: 14px;
+  cursor: pointer;
+
+  backdrop-filter: blur(6px);
+  transition: all 0.25s ease;
+
+
+}
+
+.back-btn:hover{
+  background: rgba(255,255,255,0.2);
+  transform: translateX(-3px);
+}
+
+/* CONTAINER */
+.container {
+  max-width: 760px;
+  margin: auto;
+  padding: 30px 20px;
+}
+
+/* CARD (glassmorphism) */
+.card {
+  background: var(--card);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  padding: 22px;
+  border-radius: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+  transition: 0.3s;
+}
+
+.card:hover{
+  transform: translateY(-4px);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+}
+
+/* QUESTION */
+.question {
+  font-weight: 600;
+  margin-bottom: 14px;
+  font-size: 17px;
+}
+
+/* SELECT */
+#aulaSelect {
+  width: 100%;
+  padding: 13px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: #f8fafc;
+  font-size: 15px;
+  transition: 0.2s;
+}
+
+#aulaSelect:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: white;
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+}
+
+/* CHIP GROUP */
+.chip-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.chip {
+  padding: 10px 16px;
+  background: #f1f5f9;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  border: 1px solid transparent;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.chip:hover {
+  background: #e0e7ff;
+  border-color: var(--primary);
+  transform: scale(1.05);
+}
+
+/* SELECTED CHIP (más pro) */
+.chip.selected {
+  background: linear-gradient(135deg, #4a6cf7, #0f172a);
+  color: white;
+  border: none;
+  box-shadow: 0 6px 16px rgba(99,102,241,0.4);
+  transform: scale(1.05);
+}
+
+/* BUTTON */
+button {
+  width: 100%;
+  background:
+    radial-gradient(circle at 20% 0%, rgba(74,108,247,0.35), transparent 45%),
+    radial-gradient(circle at 80% 10%, rgba(6,182,212,0.20), transparent 40%),
+linear-gradient(180deg, #1e293b 0%, #020617 100%);  color: white;
+  border: none;
+  border-radius: 16px;
+  padding: 16px;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: 0.3s;
+  box-shadow: 0 10px 25px rgba(99,102,241,0.3);
+}
+
+button:hover {
+  transform: translateY(-2px);
+  background:
+    radial-gradient(circle at 20% 0%, rgba(74,108,247,0.35), transparent 45%),
+    radial-gradient(circle at 80% 10%, rgba(6,182,212,0.20), transparent 40%),
+linear-gradient(180deg, #1e293b 0%, #020617 100%);}
+
+button:active {
+  transform: scale(0.97);
+}
+
+/* ===== FINAL SCREEN ===== */
+.final-screen{
+  position: fixed;
+  inset: 0;
+  background: rgba(2,6,23,0.75);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.final-card{
+  background: white;
+  padding: 32px;
+  border-radius: 20px;
+  width: 320px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+  animation: scaleIn 0.3s ease;
+}
+
+.final-card h2{
+  margin-bottom: 10px;
+  font-size: 20px;
+}
+
+.final-card p{
+  color: var(--muted);
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.final-card button{
+  width: 100%;
+}
+
+@keyframes scaleIn{
+  from{
+    opacity:0;
+    transform: scale(0.9);
+  }
+  to{
+    opacity:1;
+    transform: scale(1);
+  }
+}
+
+/* ===== TOAST (MENSAJES MODERNOS) ===== */
+.toast{
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toast-content{
+  min-width: 260px;
+  max-width: 320px;
+  padding: 14px 18px;
+  font-size: 14px;
+  font-weight: 500;
+
+  display: flex;
+  align-items: center;
+  gap: 10px; /* 🔥 espacio entre icono y texto */
+
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  animation: slideIn 0.4s ease;
+}
+
+/* TIPOS */
+.toast.success{
+  background: #16a34a;
+  border-left: 4px solid #4ade80;
+  color:white;
+}
+
+.toast.warning{
+  background: #b45309;
+  border-left: 4px solid #fbbf24;
+    color:white;
+
+}
+
+.toast.error{
+  background: #b91c1c;
+  border-left: 4px solid #f87171;
+    color:white;
+
+}
+.toast.hide{
+  opacity:0;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+}
+
+/* HIDDEN */
+.hidden{
+  display:none;
+}
+
+/* ANIMACIÓN */
+@keyframes slideIn{
+  from{
+    opacity:0;
+    transform: translateY(-30px) scale(0.95);
+  }
+  to{
+    opacity:1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+

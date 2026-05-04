@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<title>Panel del estudiante</title>
+  <link rel="stylesheet" href="estudiante.css" />
+
+
+</head>
+<div id="toast" class="toast hidden">
+  <div class="toast-content" id="toastContent"></div>
+</div>
+
+<div id="finalScreen" class="final-screen hidden">
+  <div class="final-card">
+    <h2>Gracias por compartir</h2>
+
+    <p>
+      Tu respuesta es anónima y ayuda a mejorar el bienestar del aula.
+    </p>
+
+    <button onclick="volverInicio()">Volver al inicio</button>
+  </div>
+</div>
+
+<body>
+
+<header>
+
+    <button class="back-btn" onclick="volverInicio()">
+  ← Volver
+</button>
+  <h1>Voz Segura</h1>
+  <p>Tu bienestar importa. Responde en menos de 1 minuto.</p>
+
+</header>
+
+<div class="container">
+
+  <!-- AULA -->
+  <div class="card">
+    <div class="question">Selecciona tu aula:</div>
+    <select id="aulaSelect">
+      <option value="">Seleccione</option>
+    </select>
+  </div>
+
+  <!-- P1 -->
+  <div class="card">
+    <div class="question">¿Qué emoción te acompañó más hoy?</div>
+    <div class="chip-group" id="emocion">
+      <div class="chip">😄 Alegría</div>
+      <div class="chip">🙂 Tranquilidad</div>
+      <div class="chip">😐 Neutral</div>
+      <div class="chip">😣 Estrés</div>
+      <div class="chip">😔 Tristeza</div>
+      <div class="chip">😕 Confusión</div>
+      <div class="chip">😡 Molestia</div>
+      <div class="chip">😴 Cansancio</div>
+      <div class="chip">😟 Ansiedad</div>
+    </div>
+  </div>
+
+  <!-- P2 -->
+  <div class="card">
+    <div class="question">¿Cómo estuvo tu motivación para estudiar hoy?</div>
+    <div class="chip-group" id="motivacion">
+      <div class="chip">Alta 🔥</div>
+      <div class="chip">Media 🙂</div>
+      <div class="chip">Baja 😴</div>
+    </div>
+  </div>
+
+  <!-- P3 -->
+  <div class="card">
+    <div class="question">Hoy en clase estuve…</div>
+    <div class="chip-group" id="atencion">
+      <div class="chip">Súper atento</div>
+      <div class="chip">Atento a medias</div>
+      <div class="chip">Perdido</div>
+      <div class="chip">Cansado</div>
+    </div>
+  </div>
+
+  <!-- P4 -->
+  <div class="card">
+    <div class="question">¿Tu energía hoy estuvo…?</div>
+    <div class="chip-group" id="energia">
+      <div class="chip">Alta 🔋</div>
+      <div class="chip">Media 🔋</div>
+      <div class="chip">Baja 🪫</div>
+    </div>
+  </div>
+
+  <!-- P5 -->
+  <div class="card">
+    <div class="question">¿Cómo estuvo el ambiente con tus compañeros hoy?</div>
+    <div class="chip-group" id="ambiente">
+      <div class="chip">Muy bueno</div>
+      <div class="chip">Bueno</div>
+      <div class="chip">Normal</div>
+      <div class="chip">Tenso</div>
+      <div class="chip">Difícil</div>
+    </div>
+  </div>
+
+  <!-- P6 -->
+  <div class="card">
+    <div class="question">¿Te sentiste acompañado por tus amig@s hoy?</div>
+    <div class="chip-group" id="acompanamiento">
+      <div class="chip">Sí</div>
+      <div class="chip">Más o menos</div>
+      <div class="chip">No</div>
+    </div>
+  </div>
+
+  <!-- P7 NUEVA PREGUNTA -->
+  <div class="card">
+    <div class="question">¿Qué tema te interesa que trabajemos?</div>
+    <div class="chip-group" id="tema">
+      <div class="chip">Convivencia familiar</div>
+      <div class="chip">Ansiedad</div>
+      <div class="chip">Proyecto de vida</div>
+      <div class="chip">Salud</div>
+      <div class="chip">Orientación vocacional</div>
+      <div class="chip">Otro</div>
+    </div>
+  </div>
+
+  <button onclick="enviar()">Enviar respuestas</button>
+
+</div>
+
+
+
+
+
+  <script src="estudiante.js"></script>
+
+</body>
+
+</html>

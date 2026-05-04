@@ -21,6 +21,7 @@ app.use(express.json());
 // Carpeta pública correcta (solo esta)
 app.use(express.static(path.join(__dirname, "public")));
 
+
 // ----------------------------------------------------
 // DATABASE
 // ----------------------------------------------------

@@ -1,291 +1,6 @@
-<!doctype html>
-<html lang="es">
-<head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Prototipo — Dashboard Docente </title>
 
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
-  <script>
-  Chart.register(ChartDataLabels);
-</script>
-
-
-  <style>
-    :root{
-      --bg:#f4f7fb; --card:#ffffff; --primary:#4a6cf7; --accent:#06b6d4; --muted:#6b7280;
-      --good:#16a34a; --warn:#f59e0b; --danger:#ef4444;
-    }
-    *{box-sizing:border-box}
-    body{font-family:Inter, "Segoe UI", Roboto, Arial, sans-serif;background:var(--bg);margin:0;color:#0f172a}
-    header h1 {
-  margin: 0;
-  font-size: 26px;      /* antes era 20px */
-  font-weight: 700;
-}
-header {
-  background: linear-gradient(90deg, var(--primary), #2b4be6) !important;
-  color: white;
-  padding: 22px 20px;
-  box-shadow: 0px 2px 6px rgba(0,0,0,0.05);
-}
-
-header h1 {
-  margin: 0;
-  font-size: 28px;   /* más grande */
-  font-weight: 700;
-  letter-spacing: -0.5px;
-}
-
-header .small {
-  color: rgba(255,255,255,0.92) !important; /* se ve MUCHO mejor */
-  font-size: 15px;
-  margin-top: 4px;
-  display: block;
-}
-
-    .wrap{max-width:1200px;margin:18px auto;padding:0 16px}
-    .card{background:var(--card);border-radius:12px;padding:14px;box-shadow:0 6px 18px rgba(2,6,23,0.06);margin-bottom:16px}
-    .row{display:flex;gap:16px}
-    .col{flex:1}
-.kpi-row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 12px;
-}
-
-.kpi {
-  padding: 18px;
-  border-radius: 10px;
-  background: linear-gradient(180deg,#ffffff,#fbfdff);
-  text-align: center;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-}
-
-.kpi h3 {
-  margin: 0;
-  font-size: 14px;
-  color: var(--muted);
-}
-
-.kpi p {
-  margin-top: 6px;
-  font-size: 24px;
-  font-weight: 700;
-}
-
-    .controls{display:flex;gap:8px;flex-wrap:wrap}
-    .btn{background:var(--primary);color:white;border:none;padding:8px 12px;border-radius:8px;cursor:pointer}
-    .btn.secondary{background:#eef2ff;color:var(--primary)}
-    .small{font-size:13px;color:var(--muted)}
-    .charts{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:12px}
-    canvas{max-width:100%}
-    pre{height:160px;overflow:auto;background:#f8fafc;padding:10px;border-radius:8px}
-    .login-card{max-width:480px;margin:36px auto;padding:20px}
-    label{display:block;font-size:13px;margin:6px 0}
-    input[type="text"], input[type="password"]{width:100%;padding:10px;border-radius:8px;border:1px solid #e6eef8}
-    footer{max-width:1200px;margin:10px auto;text-align:center;color:var(--muted);font-size:13px}
-    @media(max-width:980px){.row{flex-direction:column}.charts{grid-template-columns:1fr}}
-    .meta{font-size:13px;color:var(--muted)}
-
-    /* IA Advanced specific */
-    .ia-top-cards { display:flex; gap:12px; flex-wrap:wrap; margin-top:8px; }
-    .ia-card { flex:1; min-width:180px; padding:12px; border-radius:10px; background:linear-gradient(180deg,#fff,#fbfdff); box-shadow:0 4px 12px rgba(2,6,23,0.04); }
-    .ia-card h4 { margin:0 0 6px; font-size:14px; }
-    .ia-card p { margin:0; font-size:13px; color:var(--muted); }
-    .ia-narrative { margin-top:12px; padding:12px; background:#fff; border-radius:8px; box-shadow: 0 2px 8px rgba(2,6,23,0.03); }
-    .ia-recs-list .ia-rec { margin-bottom:12px; padding:10px; border-radius:8px; background:#fbfdff; }
-    .ia-alert { padding:10px; border-left:4px solid var(--danger); background:#fee2e2; color:#7a2b2b; border-radius:6px; }
-    .ia-warn { padding:10px; border-left:4px solid var(--warn); background:#fffbeb; color:#664d03; border-radius:6px; }
-    .spinner { display:inline-block; width:16px; height:16px; border-radius:50%; border:3px solid rgba(0,0,0,0.08); border-top-color:var(--primary); animation:spin 1s linear infinite; vertical-align:middle; margin-right:8px;}
-    @keyframes spin { to { transform:rotate(360deg);} }
-
-    /* layout tweaks for 7 charts */
-    .charts .card { padding:10px; }
-    .chart-container {
-  position: relative;
-  width: 100%;
-  height: 340px; /* evita recorte */
-}
-.chart-vertical {
-  position: relative;
-  width: 100%;
-  height: 300px !important; /* ajustable */
-}
-
-
-    .full-width { grid-column: 1 / -1; }
-    .ia-rec .small {
-    white-space: pre-line;
-}
-
-  </style>
-
-</head>
-<body>
-  <header>
-    <div class="wrap">
-      <h1>Voz Segura - Asistente Virtual AI</h1>
-      <div class="small">Plataforma virtual para monitorear bienestar del aula y brindar recomendaciones generadas por la IA basadas en el Manual de Tutoría y Orientación Educativa. </div>
-    </div>
-  </header>
-
-  <main class="wrap">
-    <!-- LOGIN -->
-    <div id="loginWrap" class="card login-card">
-      <h3>Ingreso docente</h3>
-      <div class="small">Usa las credenciales creadas en la BD (ej. profesor1 / pass1)</div>
-      <label>Usuario</label>
-      <input id="inpUser" type="text" placeholder="ej: profesor1" />
-      <label>Contraseña</label>
-      <input id="inpPass" type="password" placeholder="ej: pass1" />
-      <div style="margin-top:10px;display:flex;gap:8px">
-        <button id="btnLogin" class="btn">Entrar</button>
-        <button id="btnDemo" class="btn secondary">Demo (aula 1)</button>
-      </div>
-      <div id="loginMsg" class="meta" style="margin-top:8px"></div>
-    </div>
-
-    <!-- DASHBOARD -->
-    <div id="dashboard" style="display:none">
-      <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
-          <div>
-            <h2 id="teacherTitle" style="margin:0">—</h2>
-            <div class="meta" id="aulaTitle">Aula: —</div>
-          </div>
-          <div class="controls">
-            <button id="btnRefresh" class="btn">Actualizar</button>
-            <button id="btnExport" class="btn secondary">Exportar respuestas</button>
-            <button id="btnAnalyze" class="btn">Ejecutar análisis IA</button>
-              <button id="btnLogout" class="btn secondary" style="background:#e5e7eb;color:#333;">Salir</button>
-
-          </div>
-        </div>
-      </div>
-
-      <!-- KPIs -->
-<div class="row">
-  <div class="col card">
-    <div class="kpi-row">
-
-      <div class="kpi">
-        <h3>😊 Alegría</h3>
-        <p id="kpiAlegria">0%</p>
-      </div>
-
-      <div class="kpi">
-        <h3>😣 Estrés / Ansiedad</h3>
-        <p id="kpiStress">0%</p>
-      </div>
-
-      <div class="kpi">
-        <h3>🔥 Motivación Alta</h3>
-        <p id="kpiMotAlta">0%</p>
-      </div>
-
-      <div class="kpi">
-        <h3>🔋 Energía Alta</h3>
-        <p id="kpiEnerAlta">0%</p>
-      </div>
-
-      <div class="kpi">
-        <h3>😔 Tristeza</h3>
-        <p id="kpiTristeza">0%</p>
-      </div>
-
-      <div class="kpi">
-        <h3>⚠️ Ambiente Tenso/Difícil</h3>
-        <p id="kpiAmbTenso">0%</p>
-      </div>
-
-    </div>
-
-    <div style="margin-top:12px" class="small">Indicadores actualizados</div>
-  </div>
-
-  <div class="col card">
-    <h3 style="margin-top:0">Resumen rápido</h3>
-    <div class="small">Total respuestas: <strong id="totalResponses">0</strong></div>
-    <div class="small" style="margin-top:8px">Última actualización: <span id="lastUpdated">—</span></div>
-    <div style="margin-top:10px">
-      <div id="alertsArea"></div>
-    </div>
-  </div>
-</div>
-
-
-      <!-- GRÁFICOS (7 distintos) -->
-      <div class="charts">
-        <div class="card">
-          <div class="small section-title">1) Emociones</div>
-<div class="chart-container">
-    <canvas id="chartEmotions"></canvas>
-</div>
-        </div>
-
-        <div class="card">
-          <div class="small section-title">2) Motivación</div>
-          <canvas id="chartMotivation"></canvas>
-        </div>
-
-        <div class="card">
-          <div class="small section-title">3) Atención</div>
-<div class="chart-vertical">
-  <canvas id="chartAttention"></canvas>
-</div>
-        </div>
-
-        <div class="card">
-          <div class="small section-title">4) Energía</div>
-          <canvas id="chartEnergy"></canvas>
-        </div>
-
-        <div class="card">
-          <div class="small section-title">5) Ambiente</div>
-          <canvas id="chartAmbiente"></canvas>
-        </div>
-
-        <div class="card">
-          <div class="small section-title">6) Acompañamiento</div>
-          <canvas id="chartAcompanamiento"></canvas>
-        </div>
-
-        <div class="card">
-  <div class="small section-title">7) Tema que quieren trabajar</div>
-  <canvas id="chartTema"></canvas>
-</div>
-
-
-      </div>
-
-      <!-- PANEL IA AVANZADO -->
-      <div id="panelIA" class="card" style="margin-top:16px">
-        <h3 style="margin-top:0">Análisis IA — Panel avanzado</h3>
-
-        <div id="iaTopBand" style="margin-top:8px"></div>
-
-        <div class="ia-top-cards" id="iaTopCards" style="margin-top:10px"></div>
-
-        <div id="iaNarrative" class="ia-narrative" style="display:none"></div>
-
-        <div class="ia-recs-list" id="iaRecsList" style="margin-top:12px"></div>
-
-        <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
-          <button id="btnIArefresh" class="btn">Actualizar recomendaciones IA</button>
-          <div id="iaStatus" class="small" style="color:var(--muted)"></div>
-        </div>
-      </div>
-
-    </div>
-  </main>
-
-  <footer>Proyecto AulaSense — Prototipo · Backend con SQLite</footer>
-
-<script>
 /* docente.html final — 7 gráficos, IA solo con botón, mantiene estructura original */
+  Chart.register(ChartDataLabels);
 
 const btnLogin = document.getElementById('btnLogin');
 const btnDemo = document.getElementById('btnDemo');
@@ -347,6 +62,8 @@ document.getElementById('aulaTitle').textContent = `Aula — ${aulaNombre}`;
 
     document.getElementById('loginWrap').style.display = 'none';
     document.getElementById('dashboard').style.display = 'block';
+    document.body.classList.remove('login-mode');
+document.body.classList.add('dashboard-mode');
     document.getElementById('loginMsg').textContent = '';
 
     await loadAll();
@@ -375,29 +92,36 @@ btnDemo.addEventListener('click', async ()=>{
 btnRefresh.addEventListener('click', ()=> loadRaw(currentAulaId));
 const btnLogout = document.getElementById('btnLogout');
 btnLogout.addEventListener('click', () => {
-  // limpiar variables de sesión en el frontend
   currentAulaId = null;
   teacherName = null;
 
-  // ocultar dashboard y mostrar login
   document.getElementById('dashboard').style.display = 'none';
   document.getElementById('loginWrap').style.display = 'block';
 
-  // limpiar campos
+  document.body.classList.remove('dashboard-mode');
+  document.body.classList.add('login-mode');
+
   document.getElementById('inpUser').value = '';
   document.getElementById('inpPass').value = '';
 
-  // eliminar IA y gráficos si estaban mostrando datos previos
   iaTopBand.innerHTML = '';
   iaTopCards.innerHTML = '';
   iaNarrative.innerHTML = '';
   iaRecsList.innerHTML = '';
   iaNarrative.style.display = 'none';
-  
-  // detener auto-refresh
+
   if (autoRefresh) clearInterval(autoRefresh);
 
-  alert("Sesión cerrada.");
+  // 🔥 reemplazo del alert
+  const toast = document.getElementById("toast");
+
+  toast.classList.remove("hidden");
+  toast.classList.add("show");
+
+  setTimeout(() => {
+    toast.classList.remove("show");
+    setTimeout(() => toast.classList.add("hidden"), 300);
+  }, 1500);
 });
 
 btnExport.addEventListener('click', exportResponses);
@@ -413,6 +137,10 @@ btnIArefresh.addEventListener('click', async ()=> { await loadIApanel(); });
 async function loadAll(){
   if(!currentAulaId){ alert('Aula no asignada'); return; }
   await loadRaw(currentAulaId);   // only load data (no IA)
+}
+
+function volverInicio(){
+  window.location.href = "/";
 }
 
 /* Helper to normalize various response shapes and include 'tema' */
@@ -951,13 +679,8 @@ if (!recs || recs.length === 0) {
 } else {
   recs.forEach(r => {
 
-    const recDiv = document.createElement("div");
-    recDiv.className = "ia-rec";
-    recDiv.style.padding = "15px";
-    recDiv.style.borderRadius = "10px";
-    recDiv.style.background = "#fff";
-    recDiv.style.boxShadow = "0 2px 8px rgba(0,0,0,0.08)";
-    recDiv.style.marginBottom = "20px";
+const recDiv = document.createElement("div");
+recDiv.className = "ia-rec";
 
     recDiv.innerHTML = `
       <h3 style="margin-top:0;font-size:17px">${r.title || "Recomendación"}</h3>
@@ -1016,8 +739,3 @@ function renderAnalyzeFromPayload(payload){
     await fetch('/api/aulas');
   }catch(e){ console.log('Backend no disponible en /api/aulas'); }
 })();
-</script>
-</body>
-</html>
-
-
