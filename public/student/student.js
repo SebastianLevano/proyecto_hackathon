@@ -1,5 +1,4 @@
 
-// Render aulas
 fetch("/api/aulas")
   .then(r => r.json())
   .then(aulas => {
@@ -12,7 +11,6 @@ fetch("/api/aulas")
     });
   });
 
-// Chip selector
 document.querySelectorAll(".chip-group").forEach(group => {
   group.addEventListener("click", e => {
     if (e.target.classList.contains("chip")) {
@@ -21,10 +19,6 @@ document.querySelectorAll(".chip-group").forEach(group => {
     }
   });
 });
-function volverInicio(){
-  window.location.href = "index.html";
-}
-// Enviar respuestas
 function enviar() {
   const aulaId = document.getElementById("aulaSelect").value;
   if (!aulaId) return showToast("Selecciona tu aula primero", "warning");
@@ -40,13 +34,12 @@ function enviar() {
   const energia = getSelected("energia");
   const ambiente = getSelected("ambiente");
   const acompanamiento = getSelected("acompanamiento");
-  const tema = getSelected("tema"); // NUEVA RESPUESTA
+  const tema = getSelected("tema");
 
   if (!emocion || !motivacion || !atencion || !energia || !ambiente || !acompanamiento || !tema) {
     return showToast("Responde todas las preguntas", "warning");
   }
 
-  // 🌟 Formato correcto
   const data = {
     answers: [
       { qid: "emocion", value: emocion },
@@ -55,7 +48,7 @@ function enviar() {
       { qid: "energia", value: energia },
       { qid: "ambiente", value: ambiente },
       { qid: "acompanamiento", value: acompanamiento },
-      { qid: "tema", value: tema } // NUEVO
+      { qid: "tema", value: tema }
     ]
   };
 
@@ -68,11 +61,9 @@ fetch("/api/respuestas", {
  .then(() => {
   showToast("¡Respuestas enviadas correctamente!", "success");
 
-  // limpiar formulario
   document.getElementById("aulaSelect").value = "";
   document.querySelectorAll(".chip").forEach(c => c.classList.remove("selected"));
 
-  // 👇 nueva pantalla después del toast
   setTimeout(() => {
     mostrarPantallaFinal();
   }, 800);
@@ -83,9 +74,9 @@ function showToast(message, type="success"){
   const content = document.getElementById("toastContent");
 
   const icons = {
-    success: "✔️",
-    error: "❌",
-    warning: "⚠️"
+    success: "OK",
+    error: "Error",
+    warning: "Atención"
   };
 
   content.innerHTML = `${icons[type]} ${message}`;
@@ -107,11 +98,11 @@ function volverInicio(){
   window.location.href = "/";
 }
 
-console.log("🔵 estudiante.html cargó en Render");
+console.log("student.html loaded");
 
 fetch("/api/aulas")
   .then(r => r.json())
   .then(aulas => {
-    console.log("🟢 Aulas recibidas desde backend:", aulas);
+    console.log("Aulas recibidas desde backend:", aulas);
   })
-  .catch(err => console.error("🔴 Error fetch aulas:", err));
+  .catch(err => console.error("Error fetch aulas:", err));

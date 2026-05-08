@@ -1,5 +1,5 @@
 
-/* docente.html final — 7 gráficos, IA solo con botón, mantiene estructura original */
+/* Teacher dashboard: charts, classroom responses, and AI recommendations. */
   Chart.register(ChartDataLabels);
 
 const btnLogin = document.getElementById('btnLogin');

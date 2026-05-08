@@ -1,123 +1,83 @@
-# 🎓 AulaSense – Plataforma Educativa Inteligente con IA
+# AulaSense
 
-AulaSense es una plataforma web educativa diseñada para el seguimiento pedagógico de estudiantes, análisis de respuestas en aula y generación de recomendaciones automáticas mediante inteligencia artificial.
+AulaSense es una plataforma web educativa para el seguimiento pedagógico de estudiantes, el análisis de respuestas en aula y la generación de recomendaciones automáticas con inteligencia artificial.
 
-El sistema está enfocado en el contexto educativo peruano, alineado con el enfoque de Tutoría y Orientación Educativa del MINEDU.
+El sistema está pensado para el contexto educativo peruano y toma como referencia el enfoque de Tutoría y Orientación Educativa del MINEDU.
 
-🔗 Demo en vivo: https://proyecto-hackathon-m8pe.onrender.com/
+## Funcionalidades
 
----
+- Panel docente con inicio de sesión y dashboard por aula.
+- Encuesta anónima para estudiantes.
+- Registro de respuestas por aula.
+- Estadísticas de emociones, motivación, atención, energía, ambiente y acompañamiento.
+- Recomendaciones pedagógicas generadas con OpenAI.
+- Frontend estático con HTML, CSS y JavaScript vanilla.
+- Backend Node.js con Express y SQLite.
 
-## 🚀 Funcionalidades principales
+## Estructura
 
-### 👨‍🏫 Panel Docente
-- Inicio de sesión por usuario
-- Dashboard de aula personalizado
-- Visualización de respuestas de estudiantes
-- Análisis automático de datos del aula
-- Limpieza y reinicio de sesión
-- Interfaz tipo panel educativo moderno
-
-### 🤖 Inteligencia Artificial
-- Análisis automático de respuestas del aula
-- Generación de recomendaciones pedagógicas
-- Enfoque basado en el Manual de Tutoría del MINEDU
-- Uso de OpenAI GPT-4o-mini
-- Detección de patrones en emociones, motivación, atención y clima del aula
-
-### 📊 Visualización de datos
-- Gráficos interactivos con Chart.js
-- Estadísticas por aula
-- Indicadores de aprendizaje y bienestar
-- Panel dinámico en tiempo real
-
-### 🗄️ Base de datos
-- SQLite (better-sqlite3)
-- Gestión de docentes, aulas y respuestas
-- Almacenamiento local eficiente para prototipo educativo
-
----
-
-## 🧱 Tecnologías utilizadas
-
-Node.js · Express.js · SQLite (better-sqlite3) · JavaScript (Vanilla) · HTML5 · CSS3 · Chart.js · OpenAI API · Render
-
----
-
-## 📁 Estructura del proyecto
-
+```text
+api/
+  index.js              # Entrada serverless para Vercel
 public/
-├── index/
-│   ├── index.html
-│   ├── index.css
-├── docente/
-│   ├── docente.html
-│   ├── docente.css
-│   ├── docente.js
-├── estudiante/
-│   ├── estudiante.html
-│   ├── estudiante.css
-│   ├── estudiante.js
-server.js
-aulasense.db
+  index.html
+  index.css
+  favicon.svg
+  teacher/
+    teacher.html
+    teacher.css
+    teacher.js
+  student/
+    student.html
+    student.css
+    student.js
+src/
+  app.js                # Aplicación Express
+server.js               # Entrada local
+aulasense.db            # Base SQLite de prototipo
+vercel.json             # Rewrites para API en Vercel
+```
 
----
+## Instalación local
 
-## ⚙️ Instalación local
-
-1. Clonar el repositorio:
-git clone https://github.com/SebastianLevano/proyecto_hackathon.git
-
-2. Entrar al proyecto:
-cd proyecto_hackathon
-
-3. Instalar dependencias:
+```bash
 npm install
+cp .env.example .env
+npm run dev
+```
 
-4. Crear archivo .env:
-OPENAI_API_KEY=tu_api_key
+Luego abre:
 
-5. Ejecutar servidor:
-node server.js
-
-6. Abrir en navegador:
+```text
 http://localhost:3000
+```
 
----
+Variables de entorno:
 
-## 🌐 Deploy en producción
+```bash
+OPENAI_API_KEY=tu_api_key
+OPENAI_MODEL=gpt-4o-mini
+```
 
-https://proyecto-hackathon-m8pe.onrender.com/
+## Deploy en Vercel
 
----
+1. Sube el repositorio a GitHub.
+2. Importa el proyecto desde Vercel.
+3. Configura `OPENAI_API_KEY` en Project Settings > Environment Variables.
+4. Usa los comandos por defecto de Vercel. No hay build step porque el frontend es estático.
 
-## 🧠 Objetivo del proyecto
+Nota: SQLite funciona para demo/prototipo. En Vercel, el filesystem serverless no es persistente, por lo que las respuestas pueden perderse entre reinicios. Para producción real conviene migrar la base de datos a PostgreSQL, Neon, Supabase o Vercel Postgres.
 
-AulaSense busca mejorar el análisis educativo en el aula mediante:
-- Uso de inteligencia artificial aplicada a educación
-- Detección de emociones y motivación del estudiante
-- Apoyo al docente en la toma de decisiones pedagógicas
-- Digitalización del seguimiento de aula
+## Credenciales demo
 
----
+```text
+profesor1 / pass1
+profesor2 / pass2
+profesor3 / pass3
+profesor4 / pass4
+profesor5 / pass5
+```
 
-## 📌 Futuras mejoras
-
-- Autenticación con JWT
-- Migración a PostgreSQL
-- Panel de estudiantes
-- Notificaciones en tiempo real
-- Exportación de reportes en PDF
-- Mejora UI/UX tipo SaaS educativo
-
----
-
-## 👨‍💻 Autor
+## Autor
 
 Sebastián Lévano
-Proyecto desarrollado como sistema educativo inteligente para evento Hackaton
-
----
-
-## 📄 Licencia
-Este proyecto es de uso educativo y académico.

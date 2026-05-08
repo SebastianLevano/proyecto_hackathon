@@ -1,15 +1,18 @@
 {
-  "name": "proyecto_hackathon",
+  "name": "aulasense",
   "version": "1.0.0",
-  "main": "backend/server.js",
+  "description": "Plataforma web educativa para seguimiento pedagógico, análisis de respuestas y recomendaciones con IA.",
+  "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "seed": "node seed.js"
+    "dev": "node server.js",
+    "start": "node server.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Sebastián Lévano",
   "license": "ISC",
-  "description": "",
+  "engines": {
+    "node": ">=20"
+  },
   "dependencies": {
     "better-sqlite3": "^12.4.6",
     "cors": "^2.8.5",
