@@ -59,15 +59,6 @@ OPENAI_API_KEY=tu_api_key
 OPENAI_MODEL=gpt-4o-mini
 ```
 
-## Deploy en Vercel
-
-1. Sube el repositorio a GitHub.
-2. Importa el proyecto desde Vercel.
-3. Configura `OPENAI_API_KEY` en Project Settings > Environment Variables.
-4. Usa los comandos por defecto de Vercel. No hay build step porque el frontend es estático.
-
-Nota: SQLite funciona para demo/prototipo. En Vercel, el filesystem serverless no es persistente, por lo que las respuestas pueden perderse entre reinicios. Para producción real conviene migrar la base de datos a PostgreSQL, Neon, Supabase o Vercel Postgres.
-
 ## Credenciales demo
 
 ```text
