@@ -1,10 +1,9 @@
 const express = require("express");
 const cors = require("cors");
-const sqlite = require("better-sqlite3");
-const fs = require("fs");
-const os = require("os");
 const path = require("path");
+const { neon } = require("@neondatabase/serverless");
 const OpenAI = require("openai");
+require("dotenv").config({ path: ".env.local", quiet: true });
 require("dotenv").config({ quiet: true });
 
 const app = express();
@@ -16,201 +15,185 @@ app.use(express.json());
 app.use(express.static(publicDir));
 
 // ----------------------------------------------------
-// DATABASE
+// DATABASE (Neon serverless / Vercel Postgres)
 // ----------------------------------------------------
-function resolveDatabasePath() {
-    const localDb = path.join(rootDir, "aulasense.db");
+const connectionString =
+  process.env.DATABASE_URL ||
+  process.env.POSTGRES_URL ||
+  process.env.POSTGRES_PRISMA_URL;
 
-    if (!process.env.VERCEL) {
-        return localDb;
-    }
-
-    const runtimeDb = path.join(os.tmpdir(), "aulasense.db");
-    if (!fs.existsSync(runtimeDb) && fs.existsSync(localDb)) {
-        fs.copyFileSync(localDb, runtimeDb);
-    }
-
-    return runtimeDb;
+if (!connectionString) {
+  console.warn(
+    "⚠️  No DATABASE_URL configurada. Las rutas que usan DB fallarán."
+  );
 }
 
-const db = new sqlite(resolveDatabasePath());
+const sql = connectionString ? neon(connectionString) : null;
 
-db.exec(`
-CREATE TABLE IF NOT EXISTS teachers (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT UNIQUE,
-    password TEXT,
-    aula_id INTEGER
-);
-
-CREATE TABLE IF NOT EXISTS aulas (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nombre TEXT
-);
-
-CREATE TABLE IF NOT EXISTS responses (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    aula_id INTEGER,
-    data TEXT,
-    created_at TEXT
-);
-`);
-
-// ----------------------------------------------------
-// SEED
-// ----------------------------------------------------
-if (db.prepare("SELECT COUNT(*) AS c FROM aulas").get().c === 0) {
-    ["1ro de Secundaria", "2do de Secundaria", "3ro de Secundaria", "4to de Secundaria", "5to de Secundaria"]
-        .forEach(n => db.prepare("INSERT INTO aulas (nombre) VALUES (?)").run(n));
-}
-
-if (db.prepare("SELECT COUNT(*) AS c FROM teachers").get().c === 0) {
-    for (let i = 1; i <= 5; i++) {
-        db.prepare(`
-            INSERT INTO teachers (username, password, aula_id)
-            VALUES (?, ?, ?)
-        `).run(`profesor${i}`, `pass${i}`, i);
-    }
-}
-
-// ----------------------------------------------------
-// SAFE JSON PARSE
-// ----------------------------------------------------
-function safeParse(text) {
-    try { return JSON.parse(text); }
-    catch { return null; }
+function requireDb(res) {
+  if (!sql) {
+    res.status(500).json({
+      error:
+        "Base de datos no configurada. Define DATABASE_URL en el entorno y ejecuta scripts/init-db.js."
+    });
+    return false;
+  }
+  return true;
 }
 
 // ----------------------------------------------------
 // LOGIN
 // ----------------------------------------------------
-app.post("/api/login", (req, res) => {
+app.post("/api/login", async (req, res) => {
+  if (!requireDb(res)) return;
+
+  try {
     const { username, password } = req.body;
 
-    const t = db.prepare(`
-        SELECT id, username, aula_id
-        FROM teachers
-        WHERE username = ? AND password = ?
-    `).get(username, password);
+    const rows = await sql`
+      SELECT id, username, aula_id
+      FROM teachers
+      WHERE username = ${username} AND password = ${password}
+    `;
 
+    const t = rows[0];
     if (!t) return res.status(401).json({ error: "Credenciales incorrectas" });
 
     return res.json({
-        id: t.id,
-        username: t.username,
-        aulaId: t.aula_id
+      id: t.id,
+      username: t.username,
+      aulaId: t.aula_id
     });
+  } catch (err) {
+    console.error("ERROR /api/login:", err);
+    return res.status(500).json({ error: "Error interno", detail: err.message });
+  }
 });
 
 // ----------------------------------------------------
 // LISTAR AULAS
 // ----------------------------------------------------
-app.get("/api/aulas", (req, res) => {
-    res.json(db.prepare("SELECT * FROM aulas").all());
+app.get("/api/aulas", async (req, res) => {
+  if (!requireDb(res)) return;
+
+  try {
+    const rows = await sql`SELECT id, nombre FROM aulas ORDER BY id`;
+    res.json(rows);
+  } catch (err) {
+    console.error("ERROR /api/aulas:", err);
+    res.status(500).json({ error: "Error interno", detail: err.message });
+  }
 });
 
 // ----------------------------------------------------
 // GUARDAR RESPUESTAS
 // ----------------------------------------------------
-app.post("/api/respuestas", (req, res) => {
+app.post("/api/respuestas", async (req, res) => {
+  if (!requireDb(res)) return;
+
+  try {
     const { aulaId, data } = req.body;
     if (!aulaId || !data)
-        return res.status(400).json({ error: "Falta aulaId o data" });
+      return res.status(400).json({ error: "Falta aulaId o data" });
 
-    db.prepare(`
-        INSERT INTO responses (aula_id, data, created_at)
-        VALUES (?, ?, datetime('now'))
-    `).run(aulaId, JSON.stringify(data));
+    await sql`
+      INSERT INTO responses (aula_id, data)
+      VALUES (${aulaId}, ${JSON.stringify(data)}::jsonb)
+    `;
 
     return res.json({ ok: true });
+  } catch (err) {
+    console.error("ERROR /api/respuestas:", err);
+    return res.status(500).json({ error: "Error interno", detail: err.message });
+  }
 });
 
 // ----------------------------------------------------
 // LISTAR RESPUESTAS POR AULA
 // ----------------------------------------------------
-app.get("/api/respuestas/:aulaId", (req, res) => {
+app.get("/api/respuestas/:aulaId", async (req, res) => {
+  if (!requireDb(res)) return;
+
+  try {
     const aulaId = req.params.aulaId;
 
-    const rows = db.prepare(`
-        SELECT id, aula_id, data, created_at
-        FROM responses
-        WHERE aula_id = ?
-        ORDER BY created_at DESC
-    `).all(aulaId);
+    const rows = await sql`
+      SELECT id, aula_id, data, created_at
+      FROM responses
+      WHERE aula_id = ${aulaId}
+      ORDER BY created_at DESC
+    `;
 
-    const parsed = rows.map(r => ({
-        id: r.id,
-        aula_id: r.aula_id,
-        created_at: r.created_at,
-        data: safeParse(r.data)
-    }));
-
-    return res.json(parsed);
+    return res.json(rows);
+  } catch (err) {
+    console.error("ERROR /api/respuestas/:aulaId:", err);
+    return res.status(500).json({ error: "Error interno", detail: err.message });
+  }
 });
 
 // ----------------------------------------------------
 // LISTAR TODAS LAS RESPUESTAS
 // ----------------------------------------------------
-app.get("/api/respuestas", (req, res) => {
-    const rows = db.prepare(`
-        SELECT id, aula_id, data, created_at
-        FROM responses
-        ORDER BY created_at DESC
-    `).all();
+app.get("/api/respuestas", async (req, res) => {
+  if (!requireDb(res)) return;
 
-    const parsed = rows.map(r => ({
-        id: r.id,
-        aula_id: r.aula_id,
-        created_at: r.created_at,
-        data: safeParse(r.data)
-    }));
+  try {
+    const rows = await sql`
+      SELECT id, aula_id, data, created_at
+      FROM responses
+      ORDER BY created_at DESC
+    `;
 
-    return res.json(parsed);
+    return res.json(rows);
+  } catch (err) {
+    console.error("ERROR /api/respuestas:", err);
+    return res.status(500).json({ error: "Error interno", detail: err.message });
+  }
 });
 
 // ----------------------------------------------------
 // DETECCIÓN DE PATRONES
 // ----------------------------------------------------
 function extractStats(rows) {
-    const stats = {
-        total: rows.length,
-        emocion: {},
-        motivacion: {},
-        atencion: {},
-        energia: {},
-        ambiente: {},
-        acompanamiento: {},
-        tema: {}
-    };
+  const stats = {
+    total: rows.length,
+    emocion: {},
+    motivacion: {},
+    atencion: {},
+    energia: {},
+    ambiente: {},
+    acompanamiento: {},
+    tema: {}
+  };
 
-    rows.forEach(r => {
-        let answers = null;
+  rows.forEach((r) => {
+    let answers = null;
 
-        if (Array.isArray(r.answers)) {
-            answers = r.answers;
-        } else if (Array.isArray(r.data?.answers)) {
-            answers = r.data.answers;
-        } else if (r.data && typeof r.data === "object") {
-            answers = Object.entries(r.data).map(([k, v]) => ({ qid: k, value: String(v) }));
-        }
+    if (Array.isArray(r.answers)) {
+      answers = r.answers;
+    } else if (Array.isArray(r?.answers)) {
+      answers = r.answers;
+    } else if (r && typeof r === "object") {
+      answers = Object.entries(r).map(([k, v]) => ({ qid: k, value: String(v) }));
+    }
 
-        if (!answers) return;
+    if (!answers) return;
 
-        answers.forEach(a => {
-            const q = (a.qid || "").toLowerCase();
-            const v = (a.value || "").trim();
+    answers.forEach((a) => {
+      const q = (a.qid || "").toLowerCase();
+      const v = (a.value || "").trim();
 
-            if (q.includes("emoc")) stats.emocion[v] = (stats.emocion[v] || 0) + 1;
-            else if (q.includes("motiv")) stats.motivacion[v] = (stats.motivacion[v] || 0) + 1;
-            else if (q.includes("aten") || q.includes("clase")) stats.atencion[v] = (stats.atencion[v] || 0) + 1;
-            else if (q.includes("energ")) stats.energia[v] = (stats.energia[v] || 0) + 1;
-            else if (q.includes("ambi")) stats.ambiente[v] = (stats.ambiente[v] || 0) + 1;
-            else if (q.includes("acom") || q.includes("amig")) stats.acompanamiento[v] = (stats.acompanamiento[v] || 0) + 1;
-            else if (q.includes("tema")) stats.tema[v] = (stats.tema[v] || 0) + 1;
-        });
+      if (q.includes("emoc")) stats.emocion[v] = (stats.emocion[v] || 0) + 1;
+      else if (q.includes("motiv")) stats.motivacion[v] = (stats.motivacion[v] || 0) + 1;
+      else if (q.includes("aten") || q.includes("clase")) stats.atencion[v] = (stats.atencion[v] || 0) + 1;
+      else if (q.includes("energ")) stats.energia[v] = (stats.energia[v] || 0) + 1;
+      else if (q.includes("ambi")) stats.ambiente[v] = (stats.ambiente[v] || 0) + 1;
+      else if (q.includes("acom") || q.includes("amig")) stats.acompanamiento[v] = (stats.acompanamiento[v] || 0) + 1;
+      else if (q.includes("tema")) stats.tema[v] = (stats.tema[v] || 0) + 1;
     });
+  });
 
-    return stats;
+  return stats;
 }
 
 // ----------------------------------------------------
@@ -218,63 +201,61 @@ function extractStats(rows) {
 // ----------------------------------------------------
 let openai = null;
 if (process.env.OPENAI_API_KEY) {
-    openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 }
 
 // ----------------------------------------------------
 // FORMATEAR RECOMENDACIONES (NO JSON)
 // ----------------------------------------------------
 function formatRecommendations(recs) {
-    return recs.map(r => ({
-        title: r.title || "Recomendación",
-        areas_minedu: Array.isArray(r.areas_minedu) ? r.areas_minedu : [],
-        summary: r.summary || "",
-        duration_min: r.duration_min || 20,
-        steps: Array.isArray(r.steps) ? r.steps : [],
-        materials: Array.isArray(r.materials) ? r.materials : [],
-        ref_unit: r.ref_unit || "Unidad X"
-    }));
+  return recs.map((r) => ({
+    title: r.title || "Recomendación",
+    areas_minedu: Array.isArray(r.areas_minedu) ? r.areas_minedu : [],
+    summary: r.summary || "",
+    duration_min: r.duration_min || 20,
+    steps: Array.isArray(r.steps) ? r.steps : [],
+    materials: Array.isArray(r.materials) ? r.materials : [],
+    ref_unit: r.ref_unit || "Unidad X"
+  }));
 }
 
-
 // ----------------------------------------------------
-// IA — RECOMENDACIONES (MODIFICADO SEGÚN MANUAL MINEDU)
+// IA — RECOMENDACIONES (BASADAS EN MANUAL MINEDU)
 // ----------------------------------------------------
 app.post("/api/ia/recomendaciones", async (req, res) => {
-    try {
-        const { aulaId } = req.body;
+  if (!requireDb(res)) return;
 
-        if (!aulaId)
-            return res.status(400).json({ error: "Falta aulaId" });
+  try {
+    const { aulaId } = req.body;
 
-        const rowsRaw = db.prepare("SELECT data FROM responses WHERE aula_id = ?").all(aulaId);
-        const parsed = rowsRaw.map(r => safeParse(r.data)).filter(Boolean);
+    if (!aulaId)
+      return res.status(400).json({ error: "Falta aulaId" });
 
-        const stats = extractStats(parsed);
+    const rows = await sql`SELECT data FROM responses WHERE aula_id = ${aulaId}`;
+    const parsed = rows.map((r) => r.data).filter(Boolean);
 
-        if (!openai) {
-            return res.json({
-                stats,
-                recs: [{
-                    title: "IA desactivada",
-                    text: "Configura tu OPENAI_API_KEY"
-                }]
-            });
-        }
+    const stats = extractStats(parsed);
 
-        // ----------------------------------------------------
-        // NUEVO PROMPT MINEDU — OPTIMIZADO PARA GPT-4o-mini
-        // ----------------------------------------------------
-        const prompt = `
+    if (!openai) {
+      return res.json({
+        stats,
+        recs: [{
+          title: "IA desactivada",
+          text: "Configura tu OPENAI_API_KEY"
+        }]
+      });
+    }
+
+    const prompt = `
 Eres un especialista peruano en Tutoría y Orientación Educativa del Ministerio de Educación (MINEDU).
 Genera recomendaciones pedagógicas que sean:
-- basadas en el “Manual de Tutoría y Orientación Educativa” del MINEDU (obligatorio),
+- basadas en el "Manual de Tutoría y Orientación Educativa" del MINEDU (obligatorio),
 - pero también creativas y generativas,
 - siempre manteniendo coherencia con los enfoques, áreas y unidades del manual.
 
 ### BASE DOCUMENTAL (OBLIGATORIA)
 Usa como fundamento el manual en sus unidades:
-- Unidad 1: marco conceptual, pilares y áreas oficiales de la tutoría.  
+- Unidad 1: marco conceptual, pilares y áreas oficiales de la tutoría.
 - Unidad 2: sesiones por cada área (personal social, académica, vocacional, salud corporal y mental,
   ayuda social, cultura y actualidad, convivencia y disciplina escolar).
 - Unidad 3: prevención y detección de riesgos (depresión, ansiedad, violencia, drogas, sexualidad, TIC).
@@ -325,93 +306,77 @@ ${JSON.stringify(stats, null, 2)}
 }
  Si falta algún campo, no generes la respuesta.
 Asegúrate de que todas las recomendaciones tengan summary, steps y materials.
-NO añadas nada fuera del JSON. 
+NO añadas nada fuera del JSON.
 NO escribas explicaciones.
 NO uses comillas triples ni bloques de código.
 Debes devolver SOLO el JSON puro, sin texto adicional.
-
-
 `;
 
-        const completion = await openai.chat.completions.create({
-            model: process.env.OPENAI_MODEL || "gpt-4o-mini",
-            messages: [
-                { role: "system", content: "Eres experto en tutoría escolar del Perú." },
-                { role: "user", content: prompt }
-            ],
-            max_tokens: 700,
-            temperature: 0.25
-        });
+    const completion = await openai.chat.completions.create({
+      model: process.env.OPENAI_MODEL || "gpt-4o-mini",
+      messages: [
+        { role: "system", content: "Eres experto en tutoría escolar del Perú." },
+        { role: "user", content: prompt }
+      ],
+      max_tokens: 700,
+      temperature: 0.25
+    });
 
-        const raw = completion.choices?.[0]?.message?.content || "";
+    const raw = completion.choices?.[0]?.message?.content || "";
 
-        // ----------------------------------------------------
-        // PARSEO JSON SEGURO
-        // ----------------------------------------------------
-        let recs = [];
-        try {
-            const jsonStart = raw.indexOf("{");
-            recs = JSON.parse(raw.slice(jsonStart)).recs || [];
-        } catch {
+    let recs = [];
+    try {
+      const jsonStart = raw.indexOf("{");
+      recs = JSON.parse(raw.slice(jsonStart)).recs || [];
+    } catch {
+      let cleaned = raw.replace(/```json/gi, "").replace(/```/g, "").trim();
 
-            // --- LIMPIEZA DEL POSIBLE BLOQUE JSON MAL FORMADO ---
-            let cleaned = raw
-                .replace(/```json/gi, "")
-                .replace(/```/g, "")
-                .trim();
+      try {
+        const extracted = JSON.parse(cleaned);
 
-            try {
-                const extracted = JSON.parse(cleaned);
+        if (extracted.recs && Array.isArray(extracted.recs)) {
+          recs = extracted.recs;
+        } else {
+          let fallbackText = cleaned
+            .replace(/[{}"]/g, "")
+            .replace(/recs:/gi, "")
+            .trim();
 
-                if (extracted.recs && Array.isArray(extracted.recs)) {
-                    recs = extracted.recs;
-                } else {
-                    // fallback 1
-                    let fallbackText = cleaned
-                        .replace(/[{}"]/g, "")
-                        .replace(/recs:/gi, "")
-                        .trim();
+          recs = [{
+            title: "Recomendación IA (fallback)",
+            text: fallbackText
+          }];
+        }
+      } catch {
+        let fallbackText = cleaned
+          .replace(/[{}"]/g, "")
+          .replace(/recs:/gi, "")
+          .trim();
 
-                    recs = [{
-                        title: "Recomendación IA (fallback)",
-                        text: fallbackText
-                    }];
-                }
-
-            } catch (err) {
-
-                // fallback 2
-                let fallbackText = cleaned
-                    .replace(/[{}"]/g, "")
-                    .replace(/recs:/gi, "")
-                    .trim();
-
-                if (fallbackText.length > 400) {
-                    fallbackText = fallbackText.slice(0, 400) + "...";
-                }
-
-                recs = [{
-                    title: "Recomendación IA (formato no estándar)",
-                    text: fallbackText
-                }];
-            }
+        if (fallbackText.length > 400) {
+          fallbackText = fallbackText.slice(0, 400) + "...";
         }
 
-        const formatted = formatRecommendations(recs);
-
-        return res.json({ stats, recs: formatted });
-
-    } catch (err) {
-        console.error("ERROR IA:", err);
-        return res.status(500).json({ error: "Error interno IA", detail: err.message });
+        recs = [{
+          title: "Recomendación IA (formato no estándar)",
+          text: fallbackText
+        }];
+      }
     }
+
+    const formatted = formatRecommendations(recs);
+
+    return res.json({ stats, recs: formatted });
+
+  } catch (err) {
+    console.error("ERROR IA:", err);
+    return res.status(500).json({ error: "Error interno IA", detail: err.message });
+  }
 });
 
 // ----------------------------------------------------
-// RUN SERVER
+// RAÍZ
 // ----------------------------------------------------
-
-// Ruta raíz → sirve el index.html
 app.get("/", (req, res) => {
   res.sendFile(path.join(publicDir, "index.html"));
 });

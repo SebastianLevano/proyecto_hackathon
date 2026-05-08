@@ -4,69 +4,83 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-  <title>AulaSense</title>
+  <title>AulaSense — Voz Segura</title>
 
-  <!-- Fuente moderna -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles/tokens.css" />
+  <link rel="stylesheet" href="/styles/base.css" />
   <link rel="stylesheet" href="index.css" />
 </head>
 
 <body>
 
-  <div class="container">
+  <main class="container">
 
-    <!-- Lado izquierdo -->
-    <div class="left">
-      <div class="badge">Plataforma educativa con IA</div>
+    <!-- Branding -->
+    <section class="left">
+      <div class="badge">
+        <span class="badge__dot" aria-hidden="true"></span>
+        Plataforma educativa con IA
+      </div>
 
-      <h1>
-        AulaSense <br>
-        <span>Monitorea tu aula</span>
+      <h1 class="hero-title">
+        <span class="brand">
+          <span class="brand__name">AulaSense</span>
+          <span class="brand__tagline">Voz Segura</span>
+        </span>
+        <span class="hero-title__line">Monitorea el bienestar de tu aula</span>
       </h1>
 
       <p class="subtitle">
-        Analiza emociones, motivación y bienestar estudiantil en tiempo real 
-        con recomendaciones inteligentes basadas en tutoría educativa.
+        Analiza emociones, motivación y bienestar estudiantil en tiempo real
+        con recomendaciones inteligentes basadas en el manual de tutoría del MINEDU.
       </p>
-    </div>
 
-    <!-- Card -->
-    <div class="card">
-      
-      <div class="card-header">
-        <h2>Bienvenido a AulaSense</h2>
+      <ul class="hero-points" aria-label="Beneficios">
+        <li>Encuestas anónimas en menos de 1 minuto</li>
+        <li>Dashboard pedagógico con 7 indicadores</li>
+        <li>Recomendaciones generadas con IA</li>
+      </ul>
+    </section>
+
+    <!-- Card de acceso -->
+    <section class="card" aria-labelledby="cardTitle">
+
+      <header class="card-header">
+        <h2 id="cardTitle">Bienvenido</h2>
         <p>Elige cómo deseas ingresar a la plataforma</p>
-      </div>
+      </header>
 
-      <div class="options">
+      <div class="options" role="list">
 
-        <a href="/teacher/teacher.html" class="option docente">
-          <div class="option-icon">👨‍🏫</div>
+        <a href="/teacher/teacher.html" class="option option--docente" role="listitem"
+           aria-label="Ingresar como docente">
+          <div class="option-icon" aria-hidden="true">👨‍🏫</div>
           <div class="option-text">
             <strong>Ingreso Docente</strong>
             <span>Panel de análisis, IA y seguimiento del aula</span>
           </div>
-          <div class="arrow">→</div>
+          <div class="arrow" aria-hidden="true">→</div>
         </a>
 
-        <a href="/student/student.html" class="option estudiante">
-          <div class="option-icon">🎓</div>
+        <a href="/student/student.html" class="option option--estudiante" role="listitem"
+           aria-label="Ingresar como estudiante">
+          <div class="option-icon" aria-hidden="true">🎓</div>
           <div class="option-text">
             <strong>Ingreso Estudiante</strong>
             <span>Responde encuestas de bienestar de forma anónima</span>
           </div>
-          <div class="arrow">→</div>
+          <div class="arrow" aria-hidden="true">→</div>
         </a>
 
       </div>
 
-      <div class="footer">
+      <footer class="card-footer">
         AulaSense · Plataforma de tutoría inteligente
-      </div>
+      </footer>
 
-    </div>
+    </section>
 
-  </div>
+  </main>
 
 </body>
 </html>

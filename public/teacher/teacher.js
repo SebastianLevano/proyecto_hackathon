@@ -125,14 +125,42 @@ btnLogout.addEventListener('click', () => {
 });
 
 btnExport.addEventListener('click', exportResponses);
-btnAnalyze.addEventListener('click', async ()=> {
-   const payload = await loadAnalyze(currentAulaId);
-   if(payload) {
-       renderAdvancedPanel(payload);
-       iaStatus.textContent = 'Análisis IA actualizado: ' + new Date().toLocaleTimeString();
-   }
+
+function setBusy(btn, busy, busyLabel) {
+  if (!btn) return;
+  if (busy) {
+    btn.dataset.originalLabel = btn.dataset.originalLabel || btn.textContent;
+    btn.disabled = true;
+    btn.classList.add('is-loading');
+    btn.innerHTML = `<span class="spinner" aria-hidden="true"></span>${busyLabel || 'Cargando...'}`;
+  } else {
+    btn.disabled = false;
+    btn.classList.remove('is-loading');
+    if (btn.dataset.originalLabel) btn.textContent = btn.dataset.originalLabel;
+  }
+}
+
+btnAnalyze.addEventListener('click', async () => {
+  setBusy(btnAnalyze, true, 'Analizando...');
+  try {
+    const payload = await loadAnalyze(currentAulaId);
+    if (payload) {
+      renderAdvancedPanel(payload);
+      iaStatus.textContent = 'Análisis IA actualizado: ' + new Date().toLocaleTimeString();
+    }
+  } finally {
+    setBusy(btnAnalyze, false);
+  }
 });
-btnIArefresh.addEventListener('click', async ()=> { await loadIApanel(); });
+
+btnIArefresh.addEventListener('click', async () => {
+  setBusy(btnIArefresh, true, 'Analizando...');
+  try {
+    await loadIApanel();
+  } finally {
+    setBusy(btnIArefresh, false);
+  }
+});
 
 async function loadAll(){
   if(!currentAulaId){ alert('Aula no asignada'); return; }

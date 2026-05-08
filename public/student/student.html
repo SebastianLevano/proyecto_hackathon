@@ -1,143 +1,139 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<title>Panel del estudiante</title>
+  <title>Encuesta de bienestar — AulaSense</title>
+
+  <link rel="stylesheet" href="/styles/tokens.css" />
+  <link rel="stylesheet" href="/styles/base.css" />
   <link rel="stylesheet" href="student.css" />
-
-
 </head>
-<div id="toast" class="toast hidden">
-  <div class="toast-content" id="toastContent"></div>
-</div>
-
-<div id="finalScreen" class="final-screen hidden">
-  <div class="final-card">
-    <h2>Gracias por compartir</h2>
-
-    <p>
-      Tu respuesta es anónima y ayuda a mejorar el bienestar del aula.
-    </p>
-
-    <button onclick="volverInicio()">Volver al inicio</button>
-  </div>
-</div>
 
 <body>
 
-<header>
-
-    <button class="back-btn" onclick="volverInicio()">
-  ← Volver
-</button>
-  <h1>Voz Segura</h1>
-  <p>Tu bienestar importa. Responde en menos de 1 minuto.</p>
-
-</header>
-
-<div class="container">
-
-  <!-- AULA -->
-  <div class="card">
-    <div class="question">Selecciona tu aula:</div>
-    <select id="aulaSelect">
-      <option value="">Seleccione</option>
-    </select>
+  <div id="toast" class="toast hidden" role="status" aria-live="polite">
+    <div class="toast-content" id="toastContent"></div>
   </div>
 
-  <!-- P1 -->
-  <div class="card">
-    <div class="question">¿Qué emoción te acompañó más hoy?</div>
-    <div class="chip-group" id="emocion">
-      <div class="chip">😄 Alegría</div>
-      <div class="chip">🙂 Tranquilidad</div>
-      <div class="chip">😐 Neutral</div>
-      <div class="chip">😣 Estrés</div>
-      <div class="chip">😔 Tristeza</div>
-      <div class="chip">😕 Confusión</div>
-      <div class="chip">😡 Molestia</div>
-      <div class="chip">😴 Cansancio</div>
-      <div class="chip">😟 Ansiedad</div>
+  <div id="finalScreen" class="final-screen hidden" role="dialog" aria-modal="true" aria-labelledby="finalTitle">
+    <div class="final-card">
+      <div class="final-check" aria-hidden="true">✓</div>
+      <h2 id="finalTitle">Gracias por compartir</h2>
+      <p>Tu respuesta es anónima y ayuda a mejorar el bienestar del aula.</p>
+      <button class="btn-submit" onclick="volverInicio()">Volver al inicio</button>
     </div>
   </div>
 
-  <!-- P2 -->
-  <div class="card">
-    <div class="question">¿Cómo estuvo tu motivación para estudiar hoy?</div>
-    <div class="chip-group" id="motivacion">
-      <div class="chip">Alta 🔥</div>
-      <div class="chip">Media 🙂</div>
-      <div class="chip">Baja 😴</div>
-    </div>
-  </div>
+  <header class="page-header">
+    <button class="back-btn" onclick="volverInicio()" aria-label="Volver al inicio">
+      <span aria-hidden="true">←</span> Volver
+    </button>
 
-  <!-- P3 -->
-  <div class="card">
-    <div class="question">Hoy en clase estuve…</div>
-    <div class="chip-group" id="atencion">
-      <div class="chip">Súper atento</div>
-      <div class="chip">Atento a medias</div>
-      <div class="chip">Perdido</div>
-      <div class="chip">Cansado</div>
-    </div>
-  </div>
+    <h1 class="brand">
+      <span class="brand__name">AulaSense</span>
+      <span class="brand__tagline">Voz Segura</span>
+    </h1>
+    <p class="header-sub">Tu bienestar importa. Responde en menos de 1 minuto.</p>
+  </header>
 
-  <!-- P4 -->
-  <div class="card">
-    <div class="question">¿Tu energía hoy estuvo…?</div>
-    <div class="chip-group" id="energia">
-      <div class="chip">Alta 🔋</div>
-      <div class="chip">Media 🔋</div>
-      <div class="chip">Baja 🪫</div>
-    </div>
-  </div>
+  <main class="container">
 
-  <!-- P5 -->
-  <div class="card">
-    <div class="question">¿Cómo estuvo el ambiente con tus compañeros hoy?</div>
-    <div class="chip-group" id="ambiente">
-      <div class="chip">Muy bueno</div>
-      <div class="chip">Bueno</div>
-      <div class="chip">Normal</div>
-      <div class="chip">Tenso</div>
-      <div class="chip">Difícil</div>
-    </div>
-  </div>
+    <!-- AULA -->
+    <section class="card">
+      <label class="question" for="aulaSelect">Selecciona tu aula</label>
+      <select id="aulaSelect">
+        <option value="">Seleccione una opción</option>
+      </select>
+    </section>
 
-  <!-- P6 -->
-  <div class="card">
-    <div class="question">¿Te sentiste acompañado por tus amig@s hoy?</div>
-    <div class="chip-group" id="acompanamiento">
-      <div class="chip">Sí</div>
-      <div class="chip">Más o menos</div>
-      <div class="chip">No</div>
-    </div>
-  </div>
+    <!-- P1 -->
+    <section class="card" id="card-emocion">
+      <p class="question">¿Qué emoción te acompañó más hoy?</p>
+      <div class="chip-group" id="emocion" role="radiogroup" aria-label="Emoción del día">
+        <div class="chip" tabindex="0" role="radio" aria-checked="false">😄 Alegría</div>
+        <div class="chip" tabindex="0" role="radio" aria-checked="false">🙂 Tranquilidad</div>
+        <div class="chip" tabindex="0" role="radio" aria-checked="false">😐 Neutral</div>
+        <div class="chip" tabindex="0" role="radio" aria-checked="false">😣 Estrés</div>
+        <div class="chip" tabindex="0" role="radio" aria-checked="false">😔 Tristeza</div>
+        <div class="chip" tabindex="0" role="radio" aria-checked="false">😕 Confusión</div>
+        <div class="chip" tabindex="0" role="radio" aria-checked="false">😡 Molestia</div>
+        <div class="chip" tabindex="0" role="radio" aria-checked="false">😴 Cansancio</div>
+        <div class="chip" tabindex="0" role="radio" aria-checked="false">😟 Ansiedad</div>
+      </div>
+    </section>
 
-  <!-- P7 NUEVA PREGUNTA -->
-  <div class="card">
-    <div class="question">¿Qué tema te interesa que trabajemos?</div>
-    <div class="chip-group" id="tema">
-      <div class="chip">Convivencia familiar</div>
-      <div class="chip">Ansiedad</div>
-      <div class="chip">Proyecto de vida</div>
-      <div class="chip">Salud</div>
-      <div class="chip">Orientación vocacional</div>
-      <div class="chip">Otro</div>
-    </div>
-  </div>
+    <!-- P2 -->
+    <section class="card" id="card-motivacion">
+      <p class="question">¿Cómo estuvo tu motivación para estudiar hoy?</p>
+      <div class="chip-group" id="motivacion" role="radiogroup">
+        <div class="chip" tabindex="0" role="radio" aria-checked="false">Alta 🔥</div>
+        <div class="chip" tabindex="0" role="radio" aria-checked="false">Media 🙂</div>
+        <div class="chip" tabindex="0" role="radio" aria-checked="false">Baja 😴</div>
+      </div>
+    </section>
 
-  <button onclick="enviar()">Enviar respuestas</button>
+    <!-- P3 -->
+    <section class="card" id="card-atencion">
+      <p class="question">Hoy en clase estuve…</p>
+      <div class="chip-group" id="atencion" role="radiogroup">
+        <div class="chip" tabindex="0" role="radio" aria-checked="false">Súper atento</div>
+        <div class="chip" tabindex="0" role="radio" aria-checked="false">Atento a medias</div>
+        <div class="chip" tabindex="0" role="radio" aria-checked="false">Perdido</div>
+        <div class="chip" tabindex="0" role="radio" aria-checked="false">Cansado</div>
+      </div>
+    </section>
 
-</div>
+    <!-- P4 -->
+    <section class="card" id="card-energia">
+      <p class="question">¿Tu energía hoy estuvo…?</p>
+      <div class="chip-group" id="energia" role="radiogroup">
+        <div class="chip" tabindex="0" role="radio" aria-checked="false">Alta 🔋</div>
+        <div class="chip" tabindex="0" role="radio" aria-checked="false">Media 🔋</div>
+        <div class="chip" tabindex="0" role="radio" aria-checked="false">Baja 🪫</div>
+      </div>
+    </section>
 
+    <!-- P5 -->
+    <section class="card" id="card-ambiente">
+      <p class="question">¿Cómo estuvo el ambiente con tus compañeros hoy?</p>
+      <div class="chip-group" id="ambiente" role="radiogroup">
+        <div class="chip" tabindex="0" role="radio" aria-checked="false">Muy bueno</div>
+        <div class="chip" tabindex="0" role="radio" aria-checked="false">Bueno</div>
+        <div class="chip" tabindex="0" role="radio" aria-checked="false">Normal</div>
+        <div class="chip" tabindex="0" role="radio" aria-checked="false">Tenso</div>
+        <div class="chip" tabindex="0" role="radio" aria-checked="false">Difícil</div>
+      </div>
+    </section>
 
+    <!-- P6 -->
+    <section class="card" id="card-acompanamiento">
+      <p class="question">¿Te sentiste acompañado por tus amig@s hoy?</p>
+      <div class="chip-group" id="acompanamiento" role="radiogroup">
+        <div class="chip" tabindex="0" role="radio" aria-checked="false">Sí</div>
+        <div class="chip" tabindex="0" role="radio" aria-checked="false">Más o menos</div>
+        <div class="chip" tabindex="0" role="radio" aria-checked="false">No</div>
+      </div>
+    </section>
 
+    <!-- P7 -->
+    <section class="card" id="card-tema">
+      <p class="question">¿Qué tema te interesa que trabajemos?</p>
+      <div class="chip-group" id="tema" role="radiogroup">
+        <div class="chip" tabindex="0" role="radio" aria-checked="false">Convivencia familiar</div>
+        <div class="chip" tabindex="0" role="radio" aria-checked="false">Ansiedad</div>
+        <div class="chip" tabindex="0" role="radio" aria-checked="false">Proyecto de vida</div>
+        <div class="chip" tabindex="0" role="radio" aria-checked="false">Salud</div>
+        <div class="chip" tabindex="0" role="radio" aria-checked="false">Orientación vocacional</div>
+        <div class="chip" tabindex="0" role="radio" aria-checked="false">Otro</div>
+      </div>
+    </section>
 
+    <button class="btn-submit" id="btnSubmit" onclick="enviar()">Enviar respuestas</button>
+
+  </main>
 
   <script src="student.js"></script>
-
 </body>
-
 </html>

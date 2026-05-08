@@ -4,192 +4,169 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-  <title>Panel del docente </title>
+  <title>Panel del docente — AulaSense</title>
 
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles/tokens.css" />
+  <link rel="stylesheet" href="/styles/base.css" />
   <link rel="stylesheet" href="teacher.css" />
-
-
 </head>
 <body class="login-mode">
-  <header>
-    <div class="wrap">
-<h1 class="logo-title">
-  <img src="/favicon.svg" class="logo-icon" alt="logo">
-  Voz Segura
-</h1>
-<div class="small">
-Panel inteligente de bienestar estudiantil con IA basada en MINEDU
-</div>
+
+  <header class="app-header">
+    <div class="wrap header-inner">
+      <button class="back-btn" onclick="volverInicio()" aria-label="Volver al inicio">
+        <span aria-hidden="true">←</span> Volver
+      </button>
+
+      <div class="header-brand">
+        <h1 class="logo-title">
+          <img src="/favicon.svg" class="logo-icon" alt="">
+          <span class="brand">
+            <span class="brand__name">AulaSense</span>
+            <span class="brand__tagline">Voz Segura</span>
+          </span>
+        </h1>
+        <p class="header-sub">Panel inteligente de bienestar estudiantil con IA basada en MINEDU</p>
+      </div>
     </div>
-    <button class="back-btn" onclick="volverInicio()">
-  ← Volver
-</button>
   </header>
 
   <main class="wrap">
     <!-- LOGIN -->
-    <div id="loginWrap" class="card login-card">
-      <h3>🔐 Ingreso Docente</h3>
-<p class="small">Accede para monitorear tu aula en tiempo real</p>
-      <div class="small">Usa las credenciales creadas en la BD (ej. profesor1 / pass1)</div>
-      <label>Usuario</label>
-      <input id="inpUser" type="text" placeholder="ej: profesor1" />
-      <label>Contraseña</label>
-      <input id="inpPass" type="password" placeholder="ej: pass1" />
-      <div style="margin-top:10px;display:flex;gap:8px">
-        <button id="btnLogin" class="btn">Entrar</button>
-        <button id="btnDemo" class="btn secondary">Demo (aula 1)</button>
+    <section id="loginWrap" class="card login-card" aria-labelledby="loginTitle">
+      <h3 id="loginTitle">Ingreso Docente</h3>
+      <p class="small">Accede para monitorear tu aula en tiempo real</p>
+      <p class="meta">Usa las credenciales demo (ej. profesor1 / pass1)</p>
+
+      <label for="inpUser">Usuario</label>
+      <input id="inpUser" type="text" placeholder="ej: profesor1" autocomplete="username" />
+
+      <label for="inpPass">Contraseña</label>
+      <input id="inpPass" type="password" placeholder="ej: pass1" autocomplete="current-password" />
+
+      <div class="login-actions">
+        <button id="btnLogin" class="btn btn--primary">Entrar</button>
+        <button id="btnDemo" class="btn btn--secondary">Demo (aula 1)</button>
       </div>
-      <div id="loginMsg" class="meta" style="margin-top:8px"></div>
-    </div>
+      <div id="loginMsg" class="meta login-msg" aria-live="polite"></div>
+    </section>
 
     <!-- DASHBOARD -->
     <div id="dashboard" style="display:none">
-      <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
-          <div>
-            <h2 id="teacherTitle" style="margin:0">—</h2>
-            <div class="meta" id="aulaTitle">Aula: —</div>
-          </div>
-          <div class="controls">
-            <button id="btnRefresh" class="btn">Actualizar</button>
-            <button id="btnExport" class="btn secondary">Exportar respuestas</button>
-            <button id="btnAnalyze" class="btn">Ejecutar análisis IA</button>
-              <button id="btnLogout" class="btn secondary" style="background:#e5e7eb;color:#333;">Salir</button>
-
-          </div>
+      <section class="card dashboard-toolbar">
+        <div class="toolbar-left">
+          <h2 id="teacherTitle">—</h2>
+          <div class="meta" id="aulaTitle">Aula: —</div>
         </div>
-      </div>
+        <div class="controls">
+          <button id="btnRefresh" class="btn btn--secondary">Actualizar</button>
+          <button id="btnExport" class="btn btn--secondary">Exportar respuestas</button>
+          <button id="btnAnalyze" class="btn btn--primary">Ejecutar análisis IA</button>
+          <button id="btnLogout" class="btn btn--ghost">Salir</button>
+        </div>
+      </section>
 
       <!-- KPIs -->
-<div class="row">
-  <div class="col card">
-    <div class="kpi-row">
+      <div class="row">
+        <div class="col card">
+          <div class="kpi-row">
+            <div class="kpi"><h3>😊 Alegría</h3><p id="kpiAlegria">0%</p></div>
+            <div class="kpi"><h3>😣 Estrés / Ansiedad</h3><p id="kpiStress">0%</p></div>
+            <div class="kpi"><h3>🔥 Motivación Alta</h3><p id="kpiMotAlta">0%</p></div>
+            <div class="kpi"><h3>🔋 Energía Alta</h3><p id="kpiEnerAlta">0%</p></div>
+            <div class="kpi"><h3>😔 Tristeza</h3><p id="kpiTristeza">0%</p></div>
+            <div class="kpi"><h3>⚠️ Ambiente Tenso</h3><p id="kpiAmbTenso">0%</p></div>
+          </div>
+          <div class="meta kpi-foot">Indicadores actualizados</div>
+        </div>
 
-      <div class="kpi">
-        <h3>😊 Alegría</h3>
-        <p id="kpiAlegria">0%</p>
+        <div class="col card summary-card">
+          <h3 class="card-title">Resumen rápido</h3>
+          <p class="small">Total de respuestas: <strong id="totalResponses">0</strong></p>
+          <p class="small">Última actualización: <span id="lastUpdated">—</span></p>
+          <div id="alertsArea" class="alerts-area"></div>
+        </div>
       </div>
 
-      <div class="kpi">
-        <h3>😣 Estrés / Ansiedad</h3>
-        <p id="kpiStress">0%</p>
-      </div>
-
-      <div class="kpi">
-        <h3>🔥 Motivación Alta</h3>
-        <p id="kpiMotAlta">0%</p>
-      </div>
-
-      <div class="kpi">
-        <h3>🔋 Energía Alta</h3>
-        <p id="kpiEnerAlta">0%</p>
-      </div>
-
-      <div class="kpi">
-        <h3>😔 Tristeza</h3>
-        <p id="kpiTristeza">0%</p>
-      </div>
-
-      <div class="kpi">
-        <h3>⚠️ Ambiente Tenso/Difícil</h3>
-        <p id="kpiAmbTenso">0%</p>
-      </div>
-
-    </div>
-
-    <div style="margin-top:12px" class="small">Indicadores actualizados</div>
-  </div>
-
-  <div class="col card">
-    <h3 style="margin-top:0">Resumen rápido</h3>
-    <div class="small">Total respuestas: <strong id="totalResponses">0</strong></div>
-    <div class="small" style="margin-top:8px">Última actualización: <span id="lastUpdated">—</span></div>
-    <div style="margin-top:10px">
-      <div id="alertsArea"></div>
-    </div>
-  </div>
-</div>
-
-
-      <!-- GRÁFICOS (7 distintos) -->
+      <!-- GRÁFICOS -->
       <div class="charts">
         <div class="card">
-          <div class="small section-title">1) Emociones</div>
-<div class="chart-container">
-    <canvas id="chartEmotions"></canvas>
-</div>
+          <div class="section-title">Emociones</div>
+          <div class="chart-container">
+            <canvas id="chartEmotions"></canvas>
+          </div>
         </div>
 
         <div class="card">
-          <div class="small section-title">2) Motivación</div>
-          <canvas id="chartMotivation"></canvas>
+          <div class="section-title">Motivación</div>
+          <div class="chart-container">
+            <canvas id="chartMotivation"></canvas>
+          </div>
         </div>
 
         <div class="card">
-          <div class="small section-title">3) Atención</div>
-<div class="chart-vertical">
-  <canvas id="chartAttention"></canvas>
-</div>
+          <div class="section-title">Atención</div>
+          <div class="chart-container">
+            <canvas id="chartAttention"></canvas>
+          </div>
         </div>
 
         <div class="card">
-          <div class="small section-title">4) Energía</div>
-          <canvas id="chartEnergy"></canvas>
+          <div class="section-title">Energía</div>
+          <div class="chart-container">
+            <canvas id="chartEnergy"></canvas>
+          </div>
         </div>
 
         <div class="card">
-          <div class="small section-title">5) Ambiente</div>
-          <canvas id="chartAmbiente"></canvas>
+          <div class="section-title">Ambiente</div>
+          <div class="chart-container">
+            <canvas id="chartAmbiente"></canvas>
+          </div>
         </div>
 
         <div class="card">
-          <div class="small section-title">6) Acompañamiento</div>
-          <canvas id="chartAcompanamiento"></canvas>
+          <div class="section-title">Acompañamiento</div>
+          <div class="chart-container">
+            <canvas id="chartAcompanamiento"></canvas>
+          </div>
         </div>
 
         <div class="card">
-  <div class="small section-title">7) Tema que quieren trabajar</div>
-  <canvas id="chartTema"></canvas>
-</div>
-
-
+          <div class="section-title">Tema sugerido por estudiantes</div>
+          <div class="chart-container">
+            <canvas id="chartTema"></canvas>
+          </div>
+        </div>
       </div>
 
-      <!-- PANEL IA AVANZADO -->
-      <div id="panelIA" class="card" style="margin-top:16px">
-        <h3 style="margin-top:0">Análisis IA — Panel avanzado</h3>
+      <!-- PANEL IA -->
+      <section id="panelIA" class="card ia-panel" aria-labelledby="iaTitle">
+        <h3 id="iaTitle" class="card-title">Análisis IA — Panel avanzado</h3>
 
-        <div id="iaTopBand" style="margin-top:8px"></div>
-
-        <div class="ia-top-cards" id="iaTopCards" style="margin-top:10px"></div>
-
+        <div id="iaTopBand" class="ia-topband"></div>
+        <div class="ia-top-cards" id="iaTopCards"></div>
         <div id="iaNarrative" class="ia-narrative" style="display:none"></div>
+        <div class="ia-recs-list" id="iaRecsList"></div>
 
-        <div class="ia-recs-list" id="iaRecsList" style="margin-top:12px"></div>
-
-        <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
-          <button id="btnIArefresh" class="btn">Actualizar recomendaciones IA</button>
-          <div id="iaStatus" class="small" style="color:var(--muted)"></div>
+        <div class="ia-actions">
+          <button id="btnIArefresh" class="btn btn--primary">Actualizar recomendaciones IA</button>
+          <span id="iaStatus" class="small ia-status" aria-live="polite"></span>
         </div>
-      </div>
-
+      </section>
     </div>
   </main>
 
-  <footer>Proyecto AulaSense — Prototipo · Backend con SQLite</footer>
+  <footer class="app-footer">AulaSense · Voz Segura · Prototipo educativo</footer>
 
+  <div id="toast" class="toast hidden" role="status" aria-live="polite">
+    <span>✓ Sesión cerrada correctamente</span>
+  </div>
 
   <script src="teacher.js"></script>
-  <div id="toast" class="toast hidden">
-  <span>✔ Sesión cerrada correctamente</span>
-</div>
-
 </body>
 </html>
-
