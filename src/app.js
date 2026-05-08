@@ -315,11 +315,12 @@ Debes devolver SOLO el JSON puro, sin texto adicional.
     const completion = await openai.chat.completions.create({
       model: process.env.OPENAI_MODEL || "gpt-4o-mini",
       messages: [
-        { role: "system", content: "Eres experto en tutoría escolar del Perú." },
+        { role: "system", content: "Eres experto en tutoría escolar del Perú. Devuelve únicamente JSON válido con la estructura solicitada." },
         { role: "user", content: prompt }
       ],
-      max_tokens: 700,
-      temperature: 0.25
+      max_tokens: 900,
+      temperature: 0.25,
+      response_format: { type: "json_object" }
     });
 
     const raw = completion.choices?.[0]?.message?.content || "";
